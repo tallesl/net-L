@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
-using System.Text;
-using System.Threading;
-
-namespace LogThis
+﻿namespace LogThis
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.IO;
+    using System.Text;
+    using System.Threading;
+
     /// <summary>
     /// Handles file writing.
     /// </summary>
     internal class FileHandler
     {
         /// <summary>
-        /// (Local) path of the directory of the log files.
+        /// Path of the directory of the log files.
         /// </summary>
-        private const string _directory = "log\\";
+        private readonly string _directory;
 
         /// <summary>
         /// Open streams (values) and their respective dates (keys).
@@ -29,9 +29,13 @@ namespace LogThis
 
         /// <summary>
         /// Register an event handler to close the opened streams when the process exits.
+        /// <param name="localPath">Local path of the directory of the log files.</param>
         /// </summary>
-        public FileHandler()
+        public FileHandler(string localPath)
         {
+            if (localPath == null) throw new ArgumentNullException("localPath");
+
+            _directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, localPath);
             _streams = new Dictionary<DateTime, FileStream>();
             _streamLock = new object();
 

@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace LogThis
+﻿namespace LogThis
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+
     /// <summary>
     /// Formats and logs the given information.
     /// Use Log.Register() to register a new format and Log.This() to log something.
@@ -35,7 +36,7 @@ namespace LogThis
         /// </summary>
         static Log()
         {
-            _fileHandler = new FileHandler();
+            _fileHandler = new FileHandler("log");
             _formats = new Dictionary<string, string>();
             _formatsLock = new object();
             _longestFormatName = 0;
