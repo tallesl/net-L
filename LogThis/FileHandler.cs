@@ -40,11 +40,10 @@
             // Closing open streams when the application exits
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => CloseAllStreams();
 
-            // Periodically cleaning up open streams and old files
+            // Periodically attempting to clean up yesterday's stream
             new Timer(e =>
             {
                 ClosePastStreams();
-                DeleteOldFiles();
             }, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
         }
 
@@ -62,26 +61,6 @@
                 var stream = GetStream(date.Date);
                 stream.Write(bytes, 0, bytes.Length);
                 stream.Flush();
-            }
-        }
-
-        /// <summary>
-        /// Deletes log files older than 10 days.
-        /// </summary>
-        private void DeleteOldFiles()
-        {
-            lock (_streamLock)
-            {
-                var today = DateTime.Today;
-                if (Directory.Exists(_directory))
-                {
-                    foreach (var filename in Directory.GetFiles(_directory))
-                    {
-                        var strDate = Path.GetFileNameWithoutExtension(filename);
-                        var date = DateTime.ParseExact(strDate, "yyyy-MM-dd", CultureInfo.InvariantCulture);
-                        if ((date - today).TotalDays > 10) File.Delete(filename);
-                    }
-                }
             }
         }
 
