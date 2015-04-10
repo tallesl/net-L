@@ -44,14 +44,6 @@ A file named after today's date (`yyyy-MM-dddd.log`) will be created in a `log\`
 
 [string.Format](http://msdn.microsoft.com/library/system.string.format) is used for formatting. If you don't want any special formatting at all just omit it when registering it.
 
-## Old log files
-
-There's a task, that runs in 2 hour interval, that deletes log files older than 10 days.
-
-10 day is what I normally expect to retain when talking about log files, so I hardcoded it.
-
-This 10 day interval is not configurable right now; if you are using the library and want to use a different interval please open an [issue](https://github.com/tallesl/LogThis/issues) or [make a pull request](https://github.com/tallesl/LogThis/pulls)
-
 ## Disabling the logging
 
 Simply unregister all formats:
@@ -60,11 +52,30 @@ Simply unregister all formats:
 Log.UnregisterAll();
 ```
 
-The library raises no error when an attempt to log with an unregistered format is made (it does nothing and returns `false`).
+The library raises no error when an attempt to log with an unregistered format is made.
 
-## .NET version
+## Old log files
 
-4.
+The library doesn't clean any of it's old log files.
+
+If you need such thing I suggest [another library (of mine)](https://github.com/tallesl/FolderCleaner):
+
+```cs
+using FolderCleaning;
+using LogThis;
+
+static readonly FolderCleaner _cleaner;
+
+// ...
+
+_cleaner = new FolderCleaner(
+    Log.Directory,            // directory path
+    TimeSpan.FromDays(10),    // cleans up files older than 10 days
+    TimeSpan.FromHours(8),    // checks for old files every 8 hours
+    FileTimestamps.Creation); // uses file creation date when checking it's time
+
+AppDomain.CurrentDomain.ProcessExit += (sender, e) => _cleaner.Dispose();
+```
 
 ## I want *this* or *that* different
 
@@ -74,4 +85,5 @@ In this cases, this library is not for you. May I suggest you to take a look at:
 
 * [log4net](http://logging.apache.org/log4net);
 * [NLog](http://nlog-project.org);
-* [ELMAH](https://code.google.com/p/elmah).
+* [ELMAH](https://code.google.com/p/elmah);
+* [Logary](http://logary.github.io).
