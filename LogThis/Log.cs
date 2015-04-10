@@ -1,7 +1,6 @@
 ﻿namespace LogThis
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
 
     /// <summary>
@@ -21,20 +20,9 @@
         private static FileWriter _writer;
 
         /// <summary>
-        /// Registered formats.
+        /// Handles line formatting.
         /// </summary>
-        private static Dictionary<string, string> _formats;
-
-        /// <summary>
-        /// Format collection lock.
-        /// </summary>
-        private static readonly object _lock;
-
-        /// <summary>
-        /// The longest registered format name length.
-        /// Used for calculating spacing when putting the format's name in the log.
-        /// </summary>
-        private static int _longestLabel;
+        private static LineFormatter _formatter;
 
         /// <summary>
         /// Ctor.
@@ -43,9 +31,7 @@
         {
             Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             _writer = new FileWriter(Directory);
-            _formats = new Dictionary<string, string>();
-            _lock = new object();
-            _longestLabel = 0;
+            _formatter = new LineFormatter();
         }
 
         /// <summary>
@@ -57,18 +43,11 @@
         /// <returns>True if the format exists and the logging was made, false otherwise.</returns>
         public static bool This(string formatName, params object[] args)
         {
-            lock (_lock)
-            {
-                if (_formats.ContainsKey(formatName))
-                {
-                    var now = DateTime.Now;
-                    var format = _formats[formatName];
-                    var content = Format(now, formatName, format, args);
-                    _writer.Write(now, content);
-                    return true;
-                }
-                else return false;
-            }
+            var now = DateTime.Now;
+            var line = _formatter.Format(now, formatName, args);
+            if (line == null) return false;
+            _writer.Write(now, line);
+            return true;
         }
 
         /// <summary>
@@ -79,12 +58,7 @@
         /// <param name="format">The format (optional)</param>
         public static void Register(string formatName, string format = "")
         {
-            format = format ?? "";
-            lock (_lock)
-            {
-                _formats[formatName] = format;
-                _longestLabel = Math.Max(_longestLabel, formatName.Length);
-            }
+            _formatter.Register(formatName, format);
         }
 
         /// <summary>
@@ -94,10 +68,7 @@
         /// <returns>True if the format was found and unregistered, false otherwise.</returns>
         public static bool Unregister(string formatName)
         {
-            lock (_lock)
-            {
-                return _formats.Remove(formatName);
-            }
+            return _formatter.Unregister(formatName);
         }
 
         /// <summary>
@@ -105,37 +76,7 @@
         /// </summary>
         public static void UnregisterAll()
         {
-            lock (_lock)
-            {
-                _formats.Clear();
-            }
-        }
-
-        /// <summary>
-        /// Formats the given arguments and returns it.
-        /// </summary>
-        /// <param name="date">The date to be included</param>
-        /// <param name="label">Format's name</param>
-        /// <param name="format">Format</param>
-        /// <param name="args">Format's arguments</param>
-        /// <returns>The formatted output</returns>
-        private static string Format(DateTime date, string label, string format, params object[] args)
-        {
-            // date
-            var formattedDate = date.ToString("yyyy-MM-dd HH:mm:ss");
-
-            // format's name
-            var spacedLabel = label + new string(' ', _longestLabel - label.Length);
-
-            // the actual content
-            var content = string.IsNullOrWhiteSpace(format) ?
-                string.Join(" ", args) :
-                string.Format(format, args);
-
-            // line ending
-            var eol = Environment.NewLine;
-
-            return string.Format("{0} {1} {2} {3}", formattedDate, spacedLabel, content, eol);
+            _formatter.UnregisterAll();
         }
     }
 }
