@@ -10,7 +10,7 @@
     /// <summary>
     /// Handles file writing.
     /// </summary>
-    internal class FileHandler
+    internal class FileWriter
     {
         /// <summary>
         /// Path of the directory of the log files.
@@ -25,17 +25,17 @@
         /// <summary>
         /// Stream collection lock.
         /// </summary>
-        private readonly object _streamLock;
+        private readonly object _lock;
 
         /// <summary>
         /// Register an event handler to close the opened streams when the process exits.
         /// <param name="directory">Path of the directory of the log files.</param>
         /// </summary>
-        public FileHandler(string directory)
+        public FileWriter(string directory)
         {
             _directory = directory;
             _streams = new Dictionary<DateTime, FileStream>();
-            _streamLock = new object();
+            _lock = new object();
 
             // Closing open streams when the application exits
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => CloseAllStreams();
@@ -55,7 +55,7 @@
         /// <param name="content">Content to be written</param>
         public void Write(DateTime date, string content)
         {
-            lock (_streamLock)
+            lock (_lock)
             {
                 var bytes = Encoding.UTF8.GetBytes(content);
                 var stream = GetStream(date.Date);
@@ -69,7 +69,7 @@
         /// </summary>
         private void ClosePastStreams()
         {
-            lock (_streamLock)
+            lock (_lock)
             {
                 var today = DateTime.Today;
                 foreach (var stream in _streams) if (stream.Key < today) stream.Value.Dispose();
@@ -81,7 +81,7 @@
         /// </summary>
         private void CloseAllStreams()
         {
-            lock (_streamLock)
+            lock (_lock)
             {
                 foreach (var stream in _streams.Values) stream.Dispose();
                 _streams.Clear();

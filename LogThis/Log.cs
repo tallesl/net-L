@@ -18,7 +18,7 @@
         /// <summary>
         /// Handles file writing.
         /// </summary>
-        private static FileHandler _fileHandler;
+        private static FileWriter _writer;
 
         /// <summary>
         /// Registered formats.
@@ -28,13 +28,13 @@
         /// <summary>
         /// Format collection lock.
         /// </summary>
-        private static readonly object _formatsLock;
+        private static readonly object _lock;
 
         /// <summary>
         /// The longest registered format name length.
         /// Used for calculating spacing when putting the format's name in the log.
         /// </summary>
-        private static int _longestFormatName;
+        private static int _longestLabel;
 
         /// <summary>
         /// Ctor.
@@ -42,10 +42,10 @@
         static Log()
         {
             Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            _fileHandler = new FileHandler(Directory);
+            _writer = new FileWriter(Directory);
             _formats = new Dictionary<string, string>();
-            _formatsLock = new object();
-            _longestFormatName = 0;
+            _lock = new object();
+            _longestLabel = 0;
         }
 
         /// <summary>
@@ -57,14 +57,14 @@
         /// <returns>True if the format exists and the logging was made, false otherwise.</returns>
         public static bool This(string formatName, params object[] args)
         {
-            lock (_formatsLock)
+            lock (_lock)
             {
                 if (_formats.ContainsKey(formatName))
                 {
                     var now = DateTime.Now;
                     var format = _formats[formatName];
                     var content = Format(now, formatName, format, args);
-                    _fileHandler.Write(now, content);
+                    _writer.Write(now, content);
                     return true;
                 }
                 else return false;
@@ -80,10 +80,10 @@
         public static void Register(string formatName, string format = "")
         {
             format = format ?? "";
-            lock (_formatsLock)
+            lock (_lock)
             {
                 _formats[formatName] = format;
-                _longestFormatName = Math.Max(_longestFormatName, formatName.Length);
+                _longestLabel = Math.Max(_longestLabel, formatName.Length);
             }
         }
 
@@ -94,7 +94,7 @@
         /// <returns>True if the format was found and unregistered, false otherwise.</returns>
         public static bool Unregister(string formatName)
         {
-            lock (_formatsLock)
+            lock (_lock)
             {
                 return _formats.Remove(formatName);
             }
@@ -105,7 +105,7 @@
         /// </summary>
         public static void UnregisterAll()
         {
-            lock (_formatsLock)
+            lock (_lock)
             {
                 _formats.Clear();
             }
@@ -125,7 +125,7 @@
             var formattedDate = date.ToString("yyyy-MM-dd HH:mm:ss");
 
             // format's name
-            var spacedLabel = label + new string(' ', _longestFormatName - label.Length);
+            var spacedLabel = label + new string(' ', _longestLabel - label.Length);
 
             // the actual content
             var content = string.IsNullOrWhiteSpace(format) ?
