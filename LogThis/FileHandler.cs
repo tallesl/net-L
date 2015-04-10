@@ -29,13 +29,11 @@
 
         /// <summary>
         /// Register an event handler to close the opened streams when the process exits.
-        /// <param name="localPath">Local path of the directory of the log files.</param>
+        /// <param name="directory">Path of the directory of the log files.</param>
         /// </summary>
-        public FileHandler(string localPath)
+        public FileHandler(string directory)
         {
-            if (localPath == null) throw new ArgumentNullException("localPath");
-
-            _directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, localPath);
+            _directory = directory;
             _streams = new Dictionary<DateTime, FileStream>();
             _streamLock = new object();
 

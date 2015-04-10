@@ -11,6 +11,11 @@
     public static class Log
     {
         /// <summary>
+        /// Path of the directory of the log files.
+        /// </summary>
+        public static readonly string Directory;
+
+        /// <summary>
         /// Handles file writing.
         /// </summary>
         private static FileHandler _fileHandler;
@@ -36,7 +41,8 @@
         /// </summary>
         static Log()
         {
-            _fileHandler = new FileHandler("log");
+            Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            _fileHandler = new FileHandler(Directory);
             _formats = new Dictionary<string, string>();
             _formatsLock = new object();
             _longestFormatName = 0;
