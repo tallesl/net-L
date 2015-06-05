@@ -35,6 +35,11 @@
         }
 
         /// <summary>
+        /// Outputs an extra new line when logging a new entry.
+        /// </summary>
+        internal bool ExtraNewLine { get; set; }
+
+        /// <summary>
         /// Register a new log format.
         /// The given format is used with string.Format; for further format info refer to it's documentation.
         /// </summary>
@@ -112,9 +117,9 @@
             var content = format == string.Empty ? string.Join(" ", args) : string.Format(format, args);
 
             // line ending
-            var eol = Environment.NewLine;
+            var eol = ExtraNewLine ? Environment.NewLine + Environment.NewLine : Environment.NewLine;
 
-            return string.Format("{0} {1} {2} {3}", formattedDate, label, content, eol);
+            return string.Format("{0} {1} {2} {3}", eol, formattedDate, label, content);
         }
     }
 }

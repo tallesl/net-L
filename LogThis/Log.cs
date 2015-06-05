@@ -35,6 +35,14 @@
         }
 
         /// <summary>
+        /// Outputs an extra new line when logging a new entry.
+        /// </summary>
+        public static bool ExtraNewLine
+        {
+            set { _formatter.ExtraNewLine = value; }
+        }
+
+        /// <summary>
         /// Formats the given information and logs it.
         /// If the format doesn't exists it does nothing.
         /// </summary>
