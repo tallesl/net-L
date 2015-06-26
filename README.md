@@ -54,34 +54,19 @@ Log.UnregisterAll();
 
 The library raises no error when an attempt to log with an unregistered format is made.
 
-## Old log files
+## Cleaning old log files
 
-The library doesn't clean any of it's old log files.
-
-If you need such thing I suggest [another library (of mine)](https://github.com/tallesl/FolderCleaner):
+You can set the library to clean itself if you want.
 
 ```cs
-using FolderCleaning;
-using LogThis;
-
-static readonly FolderCleaner _cleaner;
-
-// ...
-
-_cleaner = new FolderCleaner(
-    Log.Directory,            // directory path
-    TimeSpan.FromDays(10),    // cleans up files older than 10 days
-    TimeSpan.FromHours(8),    // checks for old files every 8 hours
-    FileTimestamps.Creation); // uses file creation date when checking it's time
-
-AppDomain.CurrentDomain.ProcessExit += (sender, e) => _cleaner.Dispose();
+Log.CleanItself = true;
 ```
 
 ## I want *this* or *that* different
 
 Maybe you want to restrict the log size? Or log to a database? What about a fancy web interface?
 
-In this cases, this library is not for you. May I suggest you to take a look at:
+If that is the case, this library is not for you. May I suggest you to take a look at:
 
 * [log4net](http://logging.apache.org/log4net);
 * [NLog](http://nlog-project.org);

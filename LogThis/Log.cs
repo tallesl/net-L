@@ -1,5 +1,6 @@
 ﻿namespace LogThis
 {
+    using FolderCleaning;
     using System;
     using System.IO;
 
@@ -16,13 +17,50 @@
 
         private static FileWriter _writer;
 
+        private static FolderCleaner _cleaner;
+
+        private static object _lock;
+
         private static LineFormatter _formatter;
 
         static Log()
         {
             Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             _writer = new FileWriter(Directory);
+            _cleaner = null;
+            _lock = new object();
             _formatter = new LineFormatter();
+        }
+
+        /// <summary>
+        /// Sets the logger to clean itself (files older than 10 days).
+        /// </summary>
+        public static bool CleanItself
+        {
+            get
+            {
+                lock (_lock)
+                {
+                    return _cleaner != null;
+                }
+            }
+
+            set
+            {
+                lock (_lock)
+                {
+                    _cleaner = new FolderCleaner(Log.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
+                        FileTimestamps.Creation);
+
+                    AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+                        {
+                            lock (_lock)
+                            {
+                                if (_cleaner != null) _cleaner.Dispose();
+                            }
+                        };
+                }
+            }
         }
 
         /// <summary>
