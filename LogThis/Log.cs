@@ -14,19 +14,10 @@
         /// </summary>
         public static readonly string Directory;
 
-        /// <summary>
-        /// Handles file writing.
-        /// </summary>
         private static FileWriter _writer;
 
-        /// <summary>
-        /// Handles line formatting.
-        /// </summary>
         private static LineFormatter _formatter;
 
-        /// <summary>
-        /// Ctor.
-        /// </summary>
         static Log()
         {
             Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");

@@ -6,30 +6,14 @@
     using System.Text;
     using System.Threading;
 
-    /// <summary>
-    /// Handles file writing.
-    /// </summary>
     internal class FileWriter
     {
-        /// <summary>
-        /// Path of the directory of the log files.
-        /// </summary>
         private readonly string _directory;
 
-        /// <summary>
-        /// Open streams (values) and their respective dates (keys).
-        /// </summary>
         private readonly Dictionary<DateTime, FileStream> _streams;
 
-        /// <summary>
-        /// Stream collection lock.
-        /// </summary>
         private readonly object _lock;
 
-        /// <summary>
-        /// Register an event handler to close the opened streams when the process exits.
-        /// <param name="directory">Path of the directory of the log files.</param>
-        /// </summary>
         internal FileWriter(string directory)
         {
             _directory = directory;
@@ -46,12 +30,6 @@
             }, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
         }
 
-        /// <summary>
-        /// Asynchronously rites the passed content to the correspondent file.
-        /// The file used is determined by the content's date.
-        /// </summary>
-        /// <param name="date">Content's date</param>
-        /// <param name="content">Content to be written</param>
         internal void Write(DateTime date, string content)
         {
             lock (_lock)
@@ -63,9 +41,6 @@
             }
         }
 
-        /// <summary>
-        /// Closes past (older than today) open streams.
-        /// </summary>
         private void ClosePastStreams()
         {
             lock (_lock)
@@ -75,9 +50,6 @@
             }
         }
 
-        /// <summary>
-        /// Closes all open streams.
-        /// </summary>
         private void CloseAllStreams()
         {
             lock (_lock)
@@ -87,12 +59,6 @@
             }
         }
 
-        /// <summary>
-        /// Gets an open stream.
-        /// This method DOESN'T lock the stream collection (make sure the caller does).
-        /// </summary>
-        /// <param name="date">Stream's date</param>
-        /// <returns>An open stream</returns>
         private FileStream GetStream(DateTime date)
         {
             // Opening the stream if needed

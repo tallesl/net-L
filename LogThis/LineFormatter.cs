@@ -3,30 +3,14 @@
     using System;
     using System.Collections.Generic;
 
-    /// <summary>
-    /// Handles line formatting.
-    /// </summary>
     internal class LineFormatter
     {
-        /// <summary>
-        /// Registered formats.
-        /// </summary>
         private Dictionary<string, string> _formats;
 
-        /// <summary>
-        /// Format collection lock.
-        /// </summary>
         private readonly object _lock;
 
-        /// <summary>
-        /// The longest registered format name length.
-        /// Used for calculating spacing when putting the format's name in the log.
-        /// </summary>
         private int _longestLabel;
 
-        /// <summary>
-        /// Ctor.
-        /// </summary>
         internal LineFormatter()
         {
             _formats = new Dictionary<string, string>();
@@ -34,17 +18,8 @@
             _longestLabel = 0;
         }
 
-        /// <summary>
-        /// Outputs an extra new line when logging a new entry.
-        /// </summary>
         internal bool ExtraNewLine { get; set; }
 
-        /// <summary>
-        /// Register a new log format.
-        /// The given format is used with string.Format; for further format info refer to it's documentation.
-        /// </summary>
-        /// <param name="formatName">Format's name</param>
-        /// <param name="format">The format</param>
         internal void Register(string formatName, string format)
         {
             format = format ?? string.Empty;
@@ -55,11 +30,6 @@
             }
         }
 
-        /// <summary>
-        /// Unregisters the given format.
-        /// </summary>
-        /// <param name="formatName">Format's name</param>
-        /// <returns>True if the format was found and unregistered, false otherwise.</returns>
         internal bool Unregister(string formatName)
         {
             lock (_lock)
@@ -68,9 +38,6 @@
             }
         }
 
-        /// <summary>
-        /// Unregister all formats.
-        /// </summary>
         internal void UnregisterAll()
         {
             lock (_lock)
@@ -79,11 +46,6 @@
             }
         }
 
-        /// <summary>
-        /// Returns the format of the given format's name.
-        /// </summary>
-        /// <param name="formatName">Format's name</param>
-        /// <returns>The format if any or null</returns>
         internal string GetFormat(string formatName)
         {
             lock (_lock)
@@ -94,13 +56,6 @@
             }
         }
 
-        /// <summary>
-        /// Formats the given arguments and returns it.
-        /// </summary>
-        /// <param name="date">The date to be included</param>
-        /// <param name="formatName">Format's name</param>
-        /// <param name="args">Format's arguments</param>
-        /// <returns>The formatted output or null if the format wasn't found</returns>
         internal string Format(DateTime date, string formatName, params object[] args)
         {
             // format
