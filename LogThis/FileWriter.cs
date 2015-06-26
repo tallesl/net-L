@@ -30,7 +30,7 @@
         /// Register an event handler to close the opened streams when the process exits.
         /// <param name="directory">Path of the directory of the log files.</param>
         /// </summary>
-        public FileWriter(string directory)
+        internal FileWriter(string directory)
         {
             _directory = directory;
             _streams = new Dictionary<DateTime, FileStream>();
@@ -52,7 +52,7 @@
         /// </summary>
         /// <param name="date">Content's date</param>
         /// <param name="content">Content to be written</param>
-        public void Write(DateTime date, string content)
+        internal void Write(DateTime date, string content)
         {
             lock (_lock)
             {
