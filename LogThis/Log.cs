@@ -81,9 +81,12 @@
         public static bool This(string formatName, params object[] args)
         {
             var now = DateTime.Now;
+
             var line = _formatter.Format(now, formatName, args);
             if (line == null) return false;
+
             _writer.Write(now, line);
+
             return true;
         }
 
