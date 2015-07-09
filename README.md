@@ -56,7 +56,7 @@ The library raises no error when an attempt to log with an unregistered format i
 
 ## Cleaning old log files
 
-You can set the library to clean itself if you want.
+You can set the library to clean itself if you want (checks every 8 hours for files older than 10 days and then deletes it).
 
 ```cs
 Log.CleanItself = true;
