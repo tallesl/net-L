@@ -6,11 +6,13 @@
     using System.Text;
     using System.Threading;
 
-    internal class FileWriter
+    internal sealed class FileWriter : IDisposable
     {
         private readonly string _directory;
 
         private readonly Dictionary<DateTime, FileStream> _streams;
+
+        private readonly Timer _timer;
 
         private readonly object _lock;
 
@@ -24,10 +26,12 @@
             AppDomain.CurrentDomain.ProcessExit += (sender, e) => CloseAllStreams();
 
             // Periodically attempting to clean up yesterday's stream
-            new Timer(e =>
-            {
-                ClosePastStreams();
-            }, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
+            _timer = new Timer(ClosePastStreams, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
+        }
+
+        public void Dispose()
+        {
+            _timer.Dispose();
         }
 
         internal void Append(DateTime date, string content)
@@ -35,19 +39,26 @@
             lock (_lock)
             {
                 var stream = GetStream(date.Date);
-                if (stream.Length > 0) content = (Environment.NewLine + Environment.NewLine + content);
+
+                if (stream.Length > 0)
+                    content = (Environment.NewLine + Environment.NewLine + content);
+
                 var bytes = Encoding.UTF8.GetBytes(content);
                 stream.Write(bytes, 0, bytes.Length);
                 stream.Flush();
             }
         }
 
-        private void ClosePastStreams()
+        private void ClosePastStreams(object ignored)
         {
             lock (_lock)
             {
                 var today = DateTime.Today;
-                foreach (var stream in _streams) if (stream.Key < today) stream.Value.Dispose();
+                foreach (var stream in _streams)
+                {
+                    if (stream.Key < today)
+                        stream.Value.Dispose();
+                }
             }
         }
 
@@ -55,7 +66,9 @@
         {
             lock (_lock)
             {
-                foreach (var stream in _streams.Values) stream.Dispose();
+                foreach (var stream in _streams.Values)
+                    stream.Dispose();
+
                 _streams.Clear();
             }
         }

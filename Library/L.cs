@@ -56,6 +56,9 @@
                         {
                             lock (_lock)
                             {
+                                if (_writer != null)
+                                    _writer.Dispose();
+
                                 if (_cleaner != null)
                                     _cleaner.Dispose();
                             }
