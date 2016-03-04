@@ -1,4 +1,4 @@
-﻿namespace LogThis
+﻿namespace LLibrary
 {
     using System;
     using System.Collections.Generic;

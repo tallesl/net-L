@@ -1,4 +1,4 @@
-﻿namespace LogThis
+﻿namespace LLibrary
 {
     using FolderCleaning;
     using System;
@@ -8,7 +8,7 @@
     /// Formats and logs the given information.
     /// Use Log.Register() to register a new format and Log.This() to log something.
     /// </summary>
-    public static class Log
+    public static class L
     {
         /// <summary>
         /// Path of the directory of the log files.
@@ -23,7 +23,7 @@
 
         private static LineFormatter _formatter;
 
-        static Log()
+        static L()
         {
             Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             _writer = new FileWriter(Directory);
@@ -49,14 +49,15 @@
             {
                 lock (_lock)
                 {
-                    _cleaner = new FolderCleaner(Log.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
+                    _cleaner = new FolderCleaner(L.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
                         FileTimestamps.Creation);
 
                     AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
                         {
                             lock (_lock)
                             {
-                                if (_cleaner != null) _cleaner.Dispose();
+                                if (_cleaner != null)
+                                    _cleaner.Dispose();
                             }
                         };
                 }
@@ -70,12 +71,14 @@
         /// <param name="formatName">Name of the registered format to use</param>
         /// <param name="args">Arguments used when formating</param>
         /// <returns>True if the format exists and the logging was made, false otherwise.</returns>
-        public static bool This(string formatName, params object[] args)
+        public static bool Log(string formatName, params object[] args)
         {
             var now = DateTime.Now;
 
             var line = _formatter.Format(now, formatName, args);
-            if (line == null) return false;
+
+            if (line == null)
+                return false;
 
             _writer.Append(now, line);
 

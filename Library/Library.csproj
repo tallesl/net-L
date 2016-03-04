@@ -7,8 +7,8 @@
     <ProjectGuid>{0B718E1C-4DCD-43E5-A699-4B4778F82B8A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LogThis</RootNamespace>
-    <AssemblyName>LogThis</AssemblyName>
+    <RootNamespace>LLibrary</RootNamespace>
+    <AssemblyName>L</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\LogThis.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\L.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FolderCleaner">
@@ -41,7 +41,7 @@
   <ItemGroup>
     <Compile Include="FileWriter.cs" />
     <Compile Include="LineFormatter.cs" />
-    <Compile Include="Log.cs" />
+    <Compile Include="L.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
