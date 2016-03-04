@@ -37,11 +37,7 @@
             lock (_lock)
             {
                 var stream = GetStream(date.Date);
-
-                if (stream.Length > 0)
-                    content = (Environment.NewLine + Environment.NewLine + content);
-
-                var bytes = Encoding.UTF8.GetBytes(content);
+                var bytes = Encoding.UTF8.GetBytes(content + Environment.NewLine);
                 stream.Write(bytes, 0, bytes.Length);
                 stream.Flush();
             }
