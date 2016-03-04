@@ -35,8 +35,9 @@
     <DocumentationFile>bin\Release\L.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FolderCleaner">
-      <HintPath>..\packages\FolderCleaner.1.0.1\lib\FolderCleaner.dll</HintPath>
+    <Reference Include="Fresh, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Fresh.2.0.0\lib\Fresh.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

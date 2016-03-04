@@ -1,6 +1,6 @@
 ﻿namespace LLibrary
 {
-    using FolderCleaning;
+    using FreshLibrary;
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.IO;
@@ -18,7 +18,7 @@
 
         private static FileWriter _writer;
 
-        private static FolderCleaner _cleaner;
+        private static FreshFolder _cleaner;
 
         private static object _lock;
 
@@ -54,8 +54,8 @@
         {
             lock (_lock)
             {
-                _cleaner = _cleaner ?? new FolderCleaner(L.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
-                    FileTimestamps.Creation);
+                _cleaner = _cleaner ?? new FreshFolder(L.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
+                    FileTimestamp.Creation);
             }
         }
 
