@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.IO;
     using System.Text;
     using System.Threading;
@@ -21,17 +23,13 @@
             _directory = directory;
             _streams = new Dictionary<DateTime, FileStream>();
             _lock = new object();
-
-            // Closing open streams when the application exits
-            AppDomain.CurrentDomain.ProcessExit += (sender, e) => CloseAllStreams();
-
-            // Periodically attempting to clean up yesterday's stream
             _timer = new Timer(ClosePastStreams, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
         }
 
         public void Dispose()
         {
             _timer.Dispose();
+            CloseAllStreams();
         }
 
         internal void Append(DateTime date, string content)
@@ -73,13 +71,15 @@
             }
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope",
+            Justification = "It's disposed on this class Dispose.")]
         private FileStream GetStream(DateTime date)
         {
             // Opening the stream if needed
             if (!_streams.ContainsKey(date))
             {
                 // Building stream's filepath
-                var filename = date.ToString("yyyy-MM-dd") + ".log";
+                var filename = date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ".log";
                 var filepath = Path.Combine(_directory, filename);
 
                 // Making sure the directory exists
@@ -88,6 +88,7 @@
                 // Opening the stream
                 _streams[date] = File.Open(filepath, FileMode.Append, FileAccess.Write, FileShare.Read);
             }
+
             return _streams[date];
         }
     }

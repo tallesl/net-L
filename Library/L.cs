@@ -2,6 +2,7 @@
 {
     using FolderCleaning;
     using System;
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
 
     /// <summary>
@@ -23,6 +24,8 @@
 
         private static LineFormatter _formatter;
 
+        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline",
+            Justification = "Making sure the ProcessExist setup goes after the initialization.")]
         static L()
         {
             Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
@@ -30,40 +33,29 @@
             _cleaner = null;
             _lock = new object();
             _formatter = new LineFormatter();
+
+            AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
+            {
+                lock (_lock)
+                {
+                    if (_writer != null)
+                        _writer.Dispose();
+
+                    if (_cleaner != null)
+                        _cleaner.Dispose();
+                }
+            };
         }
 
         /// <summary>
         /// Sets the logger to clean itself (files older than 10 days).
         /// </summary>
-        public static bool CleanItself
+        public static void CleanItself()
         {
-            get
+            lock (_lock)
             {
-                lock (_lock)
-                {
-                    return _cleaner != null;
-                }
-            }
-
-            set
-            {
-                lock (_lock)
-                {
-                    _cleaner = new FolderCleaner(L.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
-                        FileTimestamps.Creation);
-
-                    AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
-                        {
-                            lock (_lock)
-                            {
-                                if (_writer != null)
-                                    _writer.Dispose();
-
-                                if (_cleaner != null)
-                                    _cleaner.Dispose();
-                            }
-                        };
-                }
+                _cleaner = _cleaner ?? new FolderCleaner(L.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
+                    FileTimestamps.Creation);
             }
         }
 
@@ -71,14 +63,14 @@
         /// Formats the given information and logs it.
         /// If the format doesn't exists it does nothing.
         /// </summary>
-        /// <param name="formatName">Name of the registered format to use</param>
+        /// <param name="name">Name of the registered format to use</param>
         /// <param name="args">Arguments used when formating</param>
         /// <returns>True if the format exists and the logging was made, false otherwise.</returns>
-        public static bool Log(string formatName, params object[] args)
+        public static bool Log(string name, params object[] args)
         {
             var now = DateTime.Now;
 
-            var line = _formatter.Format(now, formatName, args);
+            var line = _formatter.Format(now, name, args);
 
             if (line == null)
                 return false;
@@ -90,23 +82,33 @@
 
         /// <summary>
         /// Register a new log format.
-        /// The given format is used with string.Format; for further format info refer to it's documentation.
+        /// The given format is used with string.Format, for further format info refer to it's documentation.
         /// </summary>
-        /// <param name="formatName">Format's name</param>
-        /// <param name="format">The format (optional)</param>
-        public static void Register(string formatName, string format = "")
+        /// <param name="name">Format's name</param>
+        public static void Register(string name)
         {
-            _formatter.Register(formatName, format);
+            Register(name, string.Empty);
+        }
+
+        /// <summary>
+        /// Register a new log format.
+        /// The given format is used with string.Format, for further format info refer to it's documentation.
+        /// </summary>
+        /// <param name="name">Format's name</param>
+        /// <param name="format">The format (optional)</param>
+        public static void Register(string name, string format)
+        {
+            _formatter.Register(name, format);
         }
 
         /// <summary>
         /// Unregisters the given format.
         /// </summary>
-        /// <param name="formatName">Format's name</param>
+        /// <param name="name">Format's name</param>
         /// <returns>True if the format was found and unregistered, false otherwise.</returns>
-        public static bool Unregister(string formatName)
+        public static bool Unregister(string name)
         {
-            return _formatter.Unregister(formatName);
+            return _formatter.Unregister(name);
         }
 
         /// <summary>

@@ -2,8 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
 
-    internal class LineFormatter
+    internal sealed class LineFormatter
     {
         private Dictionary<string, string> _formats;
 
@@ -58,16 +59,18 @@
         {
             // format
             var format = GetFormat(formatName);
-            if (format == null) return null;
+            if (format == null)
+                return null;
 
             // date
-            var formattedDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            var formattedDate = date.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
             // label
             var label = formatName + new string(' ', _longestLabel - formatName.Length);
 
             // the actual content
-            var content = format == string.Empty ? string.Join(" ", args) : string.Format(format, args);
+            var content = format.Length == 0 ? string.Join(" ", args) :
+                string.Format(CultureInfo.InvariantCulture, format, args);
 
             return string.Join(" ", formattedDate, label, content);
         }

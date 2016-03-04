@@ -69,7 +69,7 @@ The library raises no error when an attempt to log with an unregistered format i
 You can set the library to clean itself if you want:
 
 ```cs
-L.CleanItself = true;
+L.CleanItself();
 ```
 
 It checks every 8 hours for files older than 10 days and then deletes it.
