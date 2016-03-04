@@ -1,6 +1,6 @@
 <p align="center">
     <a href="#logthis">
-        <img alt="logo" src="logo.png">
+        <img alt="logo" src="Assets/logo-200x200.png">
     </a>
 </p>
 
