@@ -18,8 +18,6 @@
             _longestLabel = 0;
         }
 
-        internal bool ExtraNewLine { get; set; }
-
         internal void Register(string formatName, string format)
         {
             format = format ?? string.Empty;
@@ -71,10 +69,7 @@
             // the actual content
             var content = format == string.Empty ? string.Join(" ", args) : string.Format(format, args);
 
-            // line ending
-            var eol = ExtraNewLine ? Environment.NewLine + Environment.NewLine : Environment.NewLine;
-
-            return string.Format("{0} {1} {2} {3}", eol, formattedDate, label, content);
+            return string.Join(" ", formattedDate, label, content);
         }
     }
 }

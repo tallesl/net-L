@@ -64,14 +64,6 @@
         }
 
         /// <summary>
-        /// Outputs an extra new line when logging a new entry.
-        /// </summary>
-        public static bool ExtraNewLine
-        {
-            set { _formatter.ExtraNewLine = value; }
-        }
-
-        /// <summary>
         /// Formats the given information and logs it.
         /// If the format doesn't exists it does nothing.
         /// </summary>
@@ -85,7 +77,7 @@
             var line = _formatter.Format(now, formatName, args);
             if (line == null) return false;
 
-            _writer.Write(now, line);
+            _writer.Append(now, line);
 
             return true;
         }

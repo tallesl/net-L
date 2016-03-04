@@ -30,12 +30,13 @@
             }, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
         }
 
-        internal void Write(DateTime date, string content)
+        internal void Append(DateTime date, string content)
         {
             lock (_lock)
             {
-                var bytes = Encoding.UTF8.GetBytes(content);
                 var stream = GetStream(date.Date);
+                if (stream.Length > 0) content = (Environment.NewLine + Environment.NewLine + content);
+                var bytes = Encoding.UTF8.GetBytes(content);
                 stream.Write(bytes, 0, bytes.Length);
                 stream.Flush();
             }
