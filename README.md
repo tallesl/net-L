@@ -34,44 +34,27 @@ L.Register("FATAL", "An exception happened. Exception: {0}, message: {1}.")
 Then use it:
 
 ```cs
-L.Log("INFO", "Some crazy information!!1")
-L.Log("FATAL", e.GetType(), e.Message)
+L.Register("INFO");
+L.Register("ERROR", "A {0} happened: {1}");
 ```
 
 A file named `yyyy-MM-dddd.log` will be created in a `logs` folder (relative from where the application is running). 
 
-For instance, `2014-12-16.log`:
+The code above could yield, for instance, a file named `2014-12-16.log` with the content of:
 
 ```
-2014-12-16 19:21:45 INFO  Some crazy information!!1
-2014-12-16 19:21:52 FATAL An exception happened. Exception: SomeNamespace.SomeException, message: Shit happens.
+2014-12-16 19:21:45 INFO  Some information.
+2014-12-16 19:21:52 ERROR A System.Exception happened: BOOM!
 ```
-
-## Formatting
-
-[string.Format] is used for formatting.
-You may omit the format if you don't want any.
-
-[string.Format]: http://msdn.microsoft.com/library/System.String.Format
 
 ## Disabling
 
-Simply unregister all formats:
-
-```cs
-L.UnregisterAll();
-```
-
+You can unregister a single format with `L.Unregister(name)` or all of them at once with `L.UnregisterAll()`.
 The library raises no error when an attempt to log with an unregistered format is made (it simply ignores it).
 
 ## Cleaning up
 
-You can set the library to clean itself if you want:
-
-```cs
-L.CleanItself();
-```
-
+You can set the library to clean itself by calling `L.CleanItself()`.
 It checks every 8 hours for files older than 10 days and then deletes it.
 
 ## But I want...
