@@ -38,6 +38,11 @@
             {
                 var stream = GetStream(date.Date);
                 var bytes = Encoding.UTF8.GetBytes(content + Environment.NewLine);
+
+                // making sure we append to the end of the file
+                // this is needed if something else wrote into the file
+                stream.Seek(0, SeekOrigin.End);
+
                 stream.Write(bytes, 0, bytes.Length);
                 stream.Flush();
             }
@@ -82,7 +87,7 @@
                 Directory.CreateDirectory(_directory);
 
                 // Opening the stream
-                _streams[date] = File.Open(filepath, FileMode.Append, FileAccess.Write, FileShare.Read);
+                _streams[date] = File.Open(filepath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
             }
 
             return _streams[date];
