@@ -113,7 +113,7 @@
             _formatter.UnregisterAll();
         }
 
-        private static void Dispose()
+        internal static void Dispose()
         {
             lock (_lock)
             {

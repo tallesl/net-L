@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
@@ -16,6 +17,9 @@ using System.Runtime.InteropServices;
 
 // CA1014: Mark assemblies with CLSCompliantAttribute
 [assembly: CLSCompliant(true)]
+
+// For unit testing
+[assembly: InternalsVisibleTo("L.Tests")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
