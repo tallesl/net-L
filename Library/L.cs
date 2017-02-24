@@ -34,17 +34,11 @@
             _lock = new object();
             _formatter = new LineFormatter();
 
-            AppDomain.CurrentDomain.ProcessExit += (sender, e) =>
-            {
-                lock (_lock)
-                {
-                    if (_writer != null)
-                        _writer.Dispose();
-
-                    if (_cleaner != null)
-                        _cleaner.Dispose();
-                }
-            };
+            // http://stackoverflow.com/q/16673332
+            if (AppDomain.CurrentDomain.IsDefaultAppDomain())
+                AppDomain.CurrentDomain.ProcessExit += (sender, e) => Dispose();
+            else
+                AppDomain.CurrentDomain.DomainUnload += (sender, e) => Dispose();
         }
 
         /// <summary>
@@ -117,6 +111,18 @@
         public static void UnregisterAll()
         {
             _formatter.UnregisterAll();
+        }
+
+        private static void Dispose()
+        {
+            lock (_lock)
+            {
+                if (_writer != null)
+                    _writer.Dispose();
+
+                if (_cleaner != null)
+                    _cleaner.Dispose();
+            }
         }
     }
 }
