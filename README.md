@@ -27,15 +27,15 @@ Register your desired formats:
 ```cs
 using LLibrary;
 
-L.Register("INFO")
-L.Register("FATAL", "An exception happened. Exception: {0}, message: {1}.")
+L.Register("INFO");
+L.Register("ERROR", "An exception just happened: {0}");
 ```
 
 Then use it:
 
 ```cs
-L.Register("INFO");
-L.Register("ERROR", "A {0} happened: {1}");
+L.Log("INFO", "Some information");
+L.Log("ERROR", new Exception("BOOM!"));
 ```
 
 A file named `yyyy-MM-dddd.log` will be created in a `logs` folder (relative from where the application is running). 
