@@ -22,20 +22,26 @@ and over again.
 
 ## Usage
 
-Register your desired formats:
+Instantiate:
 
 ```cs
 using LLibrary;
 
-L.Register("INFO");
-L.Register("ERROR", "An exception just happened: {0}");
+var myLogger = new L();
+```
+
+Register your desired formats:
+
+```cs
+myLogger.Register("INFO");
+myLogger.Register("ERROR", "An exception just happened: {0}");
 ```
 
 Then use it:
 
 ```cs
-L.Log("INFO", "Some information");
-L.Log("ERROR", new Exception("BOOM!"));
+myLogger.Log("INFO", "Some information");
+myLogger.Log("ERROR", new Exception("BOOM!"));
 ```
 
 A file named `yyyy-MM-dddd.log` will be created in a `logs` folder (relative from where the application is running). 
@@ -45,6 +51,24 @@ The code above could yield, for instance, a file named `2014-12-16.log` with the
 ```
 2014-12-16 19:21:45 INFO  Some information.
 2014-12-16 19:21:52 ERROR A System.Exception happened: BOOM!
+```
+
+## Static
+
+There's a handy static instance for you to use in case you don't want to instantiate and hold a reference yourself:
+
+Registering formats:
+
+```cs
+L.Static.Register("INFO");
+L.Static.Register("ERROR", "An exception just happened: {0}");
+```
+
+Using it:
+
+```cs
+L.Static.Log("INFO", "Some information");
+L.Static.Log("ERROR", new Exception("BOOM!"));
 ```
 
 ## Disabling

@@ -9,6 +9,8 @@
     [TestClass]
     public class Tests
     {
+        private L L;
+
         private string FilePath
         {
             get
@@ -33,6 +35,8 @@
         [TestInitialize]
         public void Initialize()
         {
+            L = new L();
+
             L.Register("INFO");
             L.Register("ERROR", "A {0} happened: {1}");
         }

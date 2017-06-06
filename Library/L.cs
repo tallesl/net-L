@@ -7,48 +7,67 @@
 
     /// <summary>
     /// Formats and logs the given information.
-    /// Use Log.Register() to register a new format and Log.This() to log something.
+    /// Use Register() to register a new format and Log() to log something.
     /// </summary>
-    public static class L
+    public sealed class L : IDisposable
     {
+        private static readonly object _staticLock = new object();
+
+        private static L _static = null;
+
         /// <summary>
-        /// Path of the directory of the log files.
+        /// A static instance for you to use in case you don't want to instantiate and hold a reference yourself.
+        /// It hooks its Dispose() method to ProcessExit or DomainUnload, so you don't have to manually dispose it.
         /// </summary>
-        public static readonly string Directory;
-
-        private static FileWriter _writer;
-
-        private static FreshFolder _cleaner;
-
-        private static object _lock;
-
-        private static LineFormatter _formatter;
-
-        [SuppressMessage("Microsoft.Performance", "CA1810:InitializeReferenceTypeStaticFieldsInline",
-            Justification = "Making sure the ProcessExist setup goes after the initialization.")]
-        static L()
+        public static L Static
         {
-            Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            _writer = new FileWriter(Directory);
+            get
+            {
+                lock (_staticLock)
+                {
+                    if (_static == null)
+                    {
+                        _static = new L();
+
+                        // http://stackoverflow.com/q/16673332
+                        if (AppDomain.CurrentDomain.IsDefaultAppDomain())
+                            AppDomain.CurrentDomain.ProcessExit += (sender, e) => _static.Dispose();
+                        else
+                            AppDomain.CurrentDomain.DomainUnload += (sender, e) => _static.Dispose();
+                    }
+
+                    return _static;
+                }
+            }
+        }
+
+        private string _directory;
+
+        private FileWriter _writer;
+
+        private FreshFolder _cleaner;
+
+        private object _lock;
+
+        private LineFormatter _formatter;
+
+        public L()
+        {
+            _directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            _writer = new FileWriter(_directory);
             _cleaner = null;
             _lock = new object();
             _formatter = new LineFormatter();
-
-            // http://stackoverflow.com/q/16673332
-            if (AppDomain.CurrentDomain.IsDefaultAppDomain())
-                AppDomain.CurrentDomain.ProcessExit += (sender, e) => Dispose();
-            else
-                AppDomain.CurrentDomain.DomainUnload += (sender, e) => Dispose();
         }
 
         /// <summary>
-        /// Sets the logger to clean itself (files older than 10 days).
+        /// Sets it to delete any file in its folder that is older than 10 days.
         /// </summary>
-        public static void CleanItself()
+        public void CleanItself()
         {
             lock (_lock)
             {
-                _cleaner = _cleaner ?? new FreshFolder(L.Directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
+                _cleaner = _cleaner ?? new FreshFolder(_directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
                     FileTimestamp.Creation);
             }
         }
@@ -60,7 +79,7 @@
         /// <param name="name">Name of the registered format to use</param>
         /// <param name="args">Arguments used when formating</param>
         /// <returns>True if the format exists and the logging was made, false otherwise.</returns>
-        public static bool Log(string name, params object[] args)
+        public bool Log(string name, params object[] args)
         {
             var now = DateTime.Now;
 
@@ -79,7 +98,7 @@
         /// The given format is used with string.Format, for further format info refer to it's documentation.
         /// </summary>
         /// <param name="name">Format's name</param>
-        public static void Register(string name)
+        public void Register(string name)
         {
             Register(name, string.Empty);
         }
@@ -90,7 +109,7 @@
         /// </summary>
         /// <param name="name">Format's name</param>
         /// <param name="format">The format (optional)</param>
-        public static void Register(string name, string format)
+        public void Register(string name, string format)
         {
             _formatter.Register(name, format);
         }
@@ -100,7 +119,7 @@
         /// </summary>
         /// <param name="name">Format's name</param>
         /// <returns>True if the format was found and unregistered, false otherwise.</returns>
-        public static bool Unregister(string name)
+        public bool Unregister(string name)
         {
             return _formatter.Unregister(name);
         }
@@ -108,12 +127,12 @@
         /// <summary>
         /// Unregister all formats.
         /// </summary>
-        public static void UnregisterAll()
+        public void UnregisterAll()
         {
             _formatter.UnregisterAll();
         }
 
-        internal static void Dispose()
+        public void Dispose()
         {
             lock (_lock)
             {
