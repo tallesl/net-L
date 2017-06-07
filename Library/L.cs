@@ -78,6 +78,18 @@
         /// <param name="label">Label to use when logging</param>
         /// <param name="message">Message to logs</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Justification = "The called function validates it.")]
+        public void Log(Enum label, string message, params object[] args)
+        {
+            Log(label.ToString(), message, args);
+        }
+
+        /// <summary>
+        /// Formats the given information and logs it.
+        /// </summary>
+        /// <param name="label">Label to use when logging</param>
+        /// <param name="message">Message to logs</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void Log(string label, string message, params object[] args)
         {
             if (label == null)

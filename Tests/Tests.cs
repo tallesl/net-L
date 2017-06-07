@@ -32,6 +32,12 @@
             }
         }
 
+        private enum Enum
+        {
+            Foo,
+            Bar,
+        }
+
         [TestInitialize]
         public void Initialize()
         {
@@ -71,6 +77,16 @@
             {
                 writer.WriteLine("Do a barrel roll!");
             }
+        }
+
+        [TestMethod]
+        public void EnumAsLabel()
+        {
+            L.Log(Enum.Foo, "Here's foo.");
+            Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
+
+            L.Log(Enum.Bar, "And here's bar.");
+            Assert.IsTrue(FileContent.EndsWith("BAR   And here's bar."));
         }
     }
 }
