@@ -52,6 +52,13 @@
         }
 
         [TestMethod]
+        public void Vanilla()
+        {
+            L.LogInfo("Some information.");
+            Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
+        }
+
+        [TestMethod]
         public void WithFormat()
         {
             var e = new Exception("BOOM!");
@@ -61,10 +68,12 @@
         }
 
         [TestMethod]
-        public void WithoutFormat()
+        public void NotString()
         {
-            L.LogInfo("Some information.");
-            Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
+            var e = new Exception("BOOM!");
+
+            L.LogError(e);
+            Assert.IsTrue(FileContent.EndsWith("ERROR System.Exception: BOOM!"));
         }
 
         [TestMethod]

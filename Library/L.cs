@@ -76,88 +76,88 @@
         /// Formats the given information and logs it.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="message">Message to logs</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Justification = "The called function validates it.")]
-        public void Log(Enum label, string message, params object[] args)
+        public void Log(Enum label, string content, params object[] args)
         {
-            Log(label.ToString(), message, args);
+            Log(label.ToString(), content, args);
         }
 
         /// <summary>
         /// Formats the given information and logs it.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="message">Message to log</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void Log(string label, string message, params object[] args)
+        public void Log(string label, object content, params object[] args)
         {
             if (label == null)
                 throw new ArgumentNullException("label");
 
-            if (message == null)
-                throw new ArgumentNullException("message");
+            if (content == null)
+                throw new ArgumentNullException("content");
 
-            var now = DateTime.Now;
-            var formattedDate = now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            var date = DateTime.Now;
+            var formattedDate = date.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
             _longestLabel = Math.Max(_longestLabel, label.Length);
             label = label.Trim().ToUpperInvariant() + new string(' ', _longestLabel - label.Length);
 
-            var content = string.Format(CultureInfo.InvariantCulture, message, args);
-            var line = string.Join(" ", formattedDate, label, content);
+            var formattedContent = string.Format(CultureInfo.InvariantCulture, content.ToString(), args);
+            var line = string.Join(" ", formattedDate, label, formattedContent);
 
-            _writer.Append(now, line);
+            _writer.Append(date, line);
         }
 
         /// <summary>
         /// Formats the given information and logs it with DEBUG label.
         /// </summary>
-        /// <param name="message">Message to log</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogDebug(string message, params object[] args)
+        public void LogDebug(object content, params object[] args)
         {
-            Log("DEBUG", message, args);
+            Log("DEBUG", content, args);
         }
 
         /// <summary>
         /// Formats the given information and logs it with INFO label.
         /// </summary>
-        /// <param name="message">Message to log</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogInfo(string message, params object[] args)
+        public void LogInfo(object content, params object[] args)
         {
-            Log("INFO", message, args);
+            Log("INFO", content, args);
         }
 
         /// <summary>
         /// Formats the given information and logs it with WARN label.
         /// </summary>
-        /// <param name="message">Message to log</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogWarn(string message, params object[] args)
+        public void LogWarn(object content, params object[] args)
         {
-            Log("WARN", message, args);
+            Log("WARN", content, args);
         }
 
         /// <summary>
         /// Formats the given information and logs it with ERROR label.
         /// </summary>
-        /// <param name="message">Message to log</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogError(string message, params object[] args)
+        public void LogError(object content, params object[] args)
         {
-            Log("ERROR", message, args);
+            Log("ERROR", content, args);
         }
 
         /// <summary>
         /// Formats the given information and logs it with FATAL label.
         /// </summary>
-        /// <param name="message">Message to log</param>
+        /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogFatal(string message, params object[] args)
+        public void LogFatal(object content, params object[] args)
         {
-            Log("FATAL", message, args);
+            Log("FATAL", content, args);
         }
 
         public void Dispose()
