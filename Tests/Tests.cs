@@ -56,21 +56,21 @@
         {
             var e = new Exception("BOOM!");
 
-            L.Log("ERROR", "A {0} happened: {1}", e.GetType(), e.Message);
+            L.LogError("A {0} happened: {1}", e.GetType(), e.Message);
             Assert.IsTrue(FileContent.EndsWith("ERROR A System.Exception happened: BOOM!"));
         }
 
         [TestMethod]
         public void WithoutFormat()
         {
-            L.Log("INFO", "Some information.");
+            L.LogInfo("Some information.");
             Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
         }
 
         [TestMethod]
         public void NoWriteLock()
         {
-            L.Log("INFO", "Some information.");
+            L.LogInfo("Some information.");
 
             using (var file = File.Open(FilePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
             using (var writer = new StreamWriter(file))

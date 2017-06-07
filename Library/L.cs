@@ -88,7 +88,7 @@
         /// Formats the given information and logs it.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="message">Message to logs</param>
+        /// <param name="message">Message to log</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void Log(string label, string message, params object[] args)
         {
@@ -108,6 +108,56 @@
             var line = string.Join(" ", formattedDate, label, content);
 
             _writer.Append(now, line);
+        }
+
+        /// <summary>
+        /// Formats the given information and logs it with DEBUG label.
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
+        public void LogDebug(string message, params object[] args)
+        {
+            Log("DEBUG", message, args);
+        }
+
+        /// <summary>
+        /// Formats the given information and logs it with INFO label.
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
+        public void LogInfo(string message, params object[] args)
+        {
+            Log("INFO", message, args);
+        }
+
+        /// <summary>
+        /// Formats the given information and logs it with WARN label.
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
+        public void LogWarn(string message, params object[] args)
+        {
+            Log("WARN", message, args);
+        }
+
+        /// <summary>
+        /// Formats the given information and logs it with ERROR label.
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
+        public void LogError(string message, params object[] args)
+        {
+            Log("ERROR", message, args);
+        }
+
+        /// <summary>
+        /// Formats the given information and logs it with FATAL label.
+        /// </summary>
+        /// <param name="message">Message to log</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
+        public void LogFatal(string message, params object[] args)
+        {
+            Log("FATAL", message, args);
         }
 
         public void Dispose()
