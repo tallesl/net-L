@@ -3,11 +3,11 @@
     using FreshLibrary;
     using System;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
     using System.IO;
 
     /// <summary>
-    /// Formats and logs the given information.
-    /// Use Register() to register a new format and Log() to log something.
+    /// Logs the given information.
     /// </summary>
     public sealed class L : IDisposable
     {
@@ -49,7 +49,7 @@
 
         private object _lock;
 
-        private LineFormatter _formatter;
+        private int _longestLabel;
 
         public L()
         {
@@ -57,7 +57,7 @@
             _writer = new FileWriter(_directory);
             _cleaner = null;
             _lock = new object();
-            _formatter = new LineFormatter();
+            _longestLabel = 5;
         }
 
         /// <summary>
@@ -74,62 +74,28 @@
 
         /// <summary>
         /// Formats the given information and logs it.
-        /// If the format doesn't exists it does nothing.
         /// </summary>
-        /// <param name="name">Name of the registered format to use</param>
-        /// <param name="args">Arguments used when formating</param>
-        /// <returns>True if the format exists and the logging was made, false otherwise.</returns>
-        public bool Log(string name, params object[] args)
+        /// <param name="label">Label to use when logging</param>
+        /// <param name="message">Message to logs</param>
+        /// <param name="args">Arguments to use along string.Format on the given message</param>
+        public void Log(string label, string message, params object[] args)
         {
+            if (label == null)
+                throw new ArgumentNullException("label");
+
+            if (message == null)
+                throw new ArgumentNullException("message");
+
             var now = DateTime.Now;
+            var formattedDate = now.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
 
-            var line = _formatter.Format(now, name, args);
+            _longestLabel = Math.Max(_longestLabel, label.Length);
+            label = label.Trim().ToUpperInvariant() + new string(' ', _longestLabel - label.Length);
 
-            if (line == null)
-                return false;
+            var content = string.Format(CultureInfo.InvariantCulture, message, args);
+            var line = string.Join(" ", formattedDate, label, content);
 
             _writer.Append(now, line);
-
-            return true;
-        }
-
-        /// <summary>
-        /// Register a new log format.
-        /// The given format is used with string.Format, for further format info refer to it's documentation.
-        /// </summary>
-        /// <param name="name">Format's name</param>
-        public void Register(string name)
-        {
-            Register(name, string.Empty);
-        }
-
-        /// <summary>
-        /// Register a new log format.
-        /// The given format is used with string.Format, for further format info refer to it's documentation.
-        /// </summary>
-        /// <param name="name">Format's name</param>
-        /// <param name="format">The format (optional)</param>
-        public void Register(string name, string format)
-        {
-            _formatter.Register(name, format);
-        }
-
-        /// <summary>
-        /// Unregisters the given format.
-        /// </summary>
-        /// <param name="name">Format's name</param>
-        /// <returns>True if the format was found and unregistered, false otherwise.</returns>
-        public bool Unregister(string name)
-        {
-            return _formatter.Unregister(name);
-        }
-
-        /// <summary>
-        /// Unregister all formats.
-        /// </summary>
-        public void UnregisterAll()
-        {
-            _formatter.UnregisterAll();
         }
 
         public void Dispose()

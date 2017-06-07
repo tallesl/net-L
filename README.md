@@ -22,24 +22,12 @@ and over again.
 
 ## Usage
 
-Instantiate:
+Just instantiate and use it:
 
 ```cs
 using LLibrary;
 
 var myLogger = new L();
-```
-
-Register your desired formats:
-
-```cs
-myLogger.Register("INFO");
-myLogger.Register("ERROR", "An exception just happened: {0}");
-```
-
-Then use it:
-
-```cs
 myLogger.Log("INFO", "Some information");
 myLogger.Log("ERROR", new Exception("BOOM!"));
 ```
@@ -57,28 +45,14 @@ The code above could yield, for instance, a file named `2014-12-16.log` with the
 
 There's a handy static instance for you to use in case you don't want to instantiate and hold a reference yourself:
 
-Registering formats:
-
-```cs
-L.Static.Register("INFO");
-L.Static.Register("ERROR", "An exception just happened: {0}");
-```
-
-Using it:
-
 ```cs
 L.Static.Log("INFO", "Some information");
 L.Static.Log("ERROR", new Exception("BOOM!"));
 ```
 
-## Disabling
-
-You can unregister a single format with `L.Unregister(name)` or all of them at once with `L.UnregisterAll()`.
-The library raises no error when an attempt to log with an unregistered format is made (it simply ignores it).
-
 ## Cleaning up
 
-You can set the library to clean itself by calling `L.CleanItself()`.
+You can set the library to clean itself by calling `CleanItself()`.
 It checks every 8 hours for files older than 10 days and then deletes it.
 
 ## But I want...

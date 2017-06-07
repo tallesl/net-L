@@ -36,17 +36,12 @@
         public void Initialize()
         {
             L = new L();
-
-            L.Register("INFO");
-            L.Register("ERROR", "A {0} happened: {1}");
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            L.UnregisterAll();
             L.Dispose();
-
             File.Delete(FilePath);
         }
 
@@ -55,7 +50,7 @@
         {
             var e = new Exception("BOOM!");
 
-            L.Log("ERROR", e.GetType(), e.Message);
+            L.Log("ERROR", "A {0} happened: {1}", e.GetType(), e.Message);
             Assert.IsTrue(FileContent.EndsWith("ERROR A System.Exception happened: BOOM!"));
         }
 
@@ -64,32 +59,6 @@
         {
             L.Log("INFO", "Some information.");
             Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
-        }
-
-        [TestMethod]
-        public void Unregister()
-        {
-            var e = new Exception("BOOM!");
-
-            L.Unregister("INFO");
-
-            L.Log("ERROR", e.GetType(), e.Message);
-            L.Log("INFO", "Some information.");
-
-            Assert.IsTrue(FileContent.EndsWith("ERROR A System.Exception happened: BOOM!"));
-        }
-
-        [TestMethod]
-        public void UnregisterAll()
-        {
-            var e = new Exception("BOOM!");
-
-            L.UnregisterAll();
-
-            L.Log("ERROR", e.GetType(), e.Message);
-            L.Log("INFO", "Some information.");
-
-            Assert.IsFalse(File.Exists(FilePath));
         }
 
         [TestMethod]
