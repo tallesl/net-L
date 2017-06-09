@@ -28,6 +28,7 @@ Just instantiate and use it:
 using LLibrary;
 
 var myLogger = new L();
+
 myLogger.Log("INFO", "Some information");
 myLogger.Log("ERROR", new Exception("BOOM!"));
 ```
@@ -54,9 +55,28 @@ The code above could yield, for instance, a file named `2014-12-16.log` with the
 There's a handy static instance for you to use in case you don't want to instantiate and hold a reference yourself:
 
 ```cs
+L.InitializeStatic();
+
 L.Static.Log("INFO", "Some information");
 L.Static.Log("ERROR", new Exception("BOOM!"));
 ```
+
+## Configuration
+
+The library works out-of-the-box, no configuration needed, but you can configure a thing or two if you want:
+
+```cs
+var myLogger = new L(
+    new LConfiguration
+    {
+        // True to use UTC date and time when logging, false to use local.
+        // Defaults to false.
+        UseUtcTime = true,
+    }
+);
+```
+
+You can omit any of those configuration properties to use its default value.
 
 ## Cleaning up
 

@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="FileWriter.cs" />
     <Compile Include="L.cs" />
+    <Compile Include="LConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
