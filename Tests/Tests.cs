@@ -97,5 +97,12 @@
             L.Log(Enum.Bar, "And here's bar.");
             Assert.IsTrue(FileContent.EndsWith("BAR   And here's bar."));
         }
+
+        [TestMethod, ExpectedException(typeof(ObjectDisposedException))]
+        public void DisposedException()
+        {
+            L.Dispose();
+            L.LogInfo("Some information.");
+        }
     }
 }

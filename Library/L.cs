@@ -15,6 +15,14 @@
 
         private static L _static = null;
 
+        private static ObjectDisposedException ObjectDisposedException
+        {
+            get
+            {
+                return new ObjectDisposedException("Cannot access a disposed object.");
+            }
+        }
+
         /// <summary>
         /// A static instance for you to use in case you don't want to instantiate and hold a reference yourself.
         /// It hooks its Dispose() method to ProcessExit or DomainUnload, so you don't have to manually dispose it.
@@ -51,6 +59,8 @@
 
         private int _longestLabel;
 
+        private bool _disposed;
+
         public L()
         {
             _directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
@@ -58,6 +68,7 @@
             _cleaner = null;
             _lock = new object();
             _longestLabel = 5;
+            _disposed = false;
         }
 
         /// <summary>
@@ -67,6 +78,9 @@
         {
             lock (_lock)
             {
+                if (_disposed)
+                    throw ObjectDisposedException;
+
                 _cleaner = _cleaner ?? new FreshFolder(_directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
                     FileTimestamp.Creation);
             }
@@ -92,6 +106,7 @@
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void Log(string label, object content, params object[] args)
         {
+
             if (label == null)
                 throw new ArgumentNullException("label");
 
@@ -107,7 +122,13 @@
             var formattedContent = string.Format(CultureInfo.InvariantCulture, content.ToString(), args);
             var line = string.Join(" ", formattedDate, label, formattedContent);
 
-            _writer.Append(date, line);
+            lock (_lock)
+            {
+                if (_disposed)
+                    throw ObjectDisposedException;
+
+                _writer.Append(date, line);
+            }
         }
 
         /// <summary>
@@ -164,11 +185,16 @@
         {
             lock (_lock)
             {
+                if (_disposed)
+                    return;
+
                 if (_writer != null)
                     _writer.Dispose();
 
                 if (_cleaner != null)
                     _cleaner.Dispose();
+
+                _disposed = true;
             }
         }
     }
