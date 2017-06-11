@@ -118,6 +118,9 @@
                     FileTimestamp.Creation);
             }
 
+            if (string.IsNullOrEmpty(_configuration.DateTimeFormat))
+                _configuration.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+
             _lock = new object();
             _longestLabel = 5;
             _disposed = false;
@@ -151,7 +154,6 @@
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void Log(string label, object content, params object[] args)
         {
-
             if (label == null)
                 throw new ArgumentNullException("label");
 
@@ -159,7 +161,7 @@
                 throw new ArgumentNullException("content");
 
             var date = Now;
-            var formattedDate = date.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture);
+            var formattedDate = date.ToString(_configuration.DateTimeFormat, CultureInfo.InvariantCulture);
 
             _longestLabel = Math.Max(_longestLabel, label.Length);
             label = label.Trim().ToUpperInvariant() + new string(' ', _longestLabel - label.Length);

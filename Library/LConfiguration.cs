@@ -19,6 +19,12 @@
         /// </summary>
         public TimeSpan? DeleteOldFiles { get; set; }
 
+        /// <summary>
+        /// Format string to use when calling DateTime.Format.
+        /// "yyyy-MM-dd HH:mm:ss" by default.
+        /// </summary>
+        public string DateTimeFormat { get; set; }
+
         public override bool Equals(object obj)
         {
             return obj is LConfiguration ? this == (LConfiguration)obj : false;
