@@ -76,6 +76,10 @@ var myLogger = new L(
         // If other than null it sets to delete any file in the log folder that is older than the specified time.
         // Defaults to null.
         DeleteOldFiles = TimeSpan.FromDays(10),
+
+        // Directory where to create the log files.
+        // A local "logs" directory by default.
+        Directory = @"C:\custom-directory\my-logs\",
     }
 );
 ```

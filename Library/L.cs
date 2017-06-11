@@ -73,8 +73,6 @@
 
         private LConfiguration _configuration;
 
-        private string _directory;
-
         private FileWriter _writer;
 
         private FreshFolder _cleaner;
@@ -98,8 +96,10 @@
         {
             _configuration = configuration;
 
-            _directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            _writer = new FileWriter(_directory);
+            if (string.IsNullOrEmpty(_configuration.Directory))
+                _configuration.Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+
+            _writer = new FileWriter(_configuration.Directory);
 
             if (_configuration.DeleteOldFiles.HasValue)
             {
@@ -114,7 +114,7 @@
                 if (cleanUpTime > max)
                     cleanUpTime = max;
 
-                _cleaner = _cleaner ?? new FreshFolder(_directory, _configuration.DeleteOldFiles.Value, cleanUpTime,
+                _cleaner = new FreshFolder(_configuration.Directory, _configuration.DeleteOldFiles.Value, cleanUpTime,
                     FileTimestamp.Creation);
             }
 

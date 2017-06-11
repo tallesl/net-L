@@ -25,6 +25,12 @@
         /// </summary>
         public string DateTimeFormat { get; set; }
 
+        /// <summary>
+        /// Directory where to create the log files.
+        /// A local "logs" directory by default.
+        /// </summary>
+        public string Directory { get; set; }
+
         public override bool Equals(object obj)
         {
             return obj is LConfiguration ? this == (LConfiguration)obj : false;
