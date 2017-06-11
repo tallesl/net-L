@@ -5,6 +5,7 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
+    using System.Security.AccessControl;
     using System.Text;
     using System.Threading;
 
@@ -12,7 +13,7 @@
     {
         private readonly string _directory;
 
-        private readonly Dictionary<DateTime, FileStream> _streams;
+        private readonly Dictionary<DateTime, StreamWriter> _streams;
 
         private readonly Timer _timer;
 
@@ -21,7 +22,7 @@
         internal FileWriter(string directory)
         {
             _directory = directory;
-            _streams = new Dictionary<DateTime, FileStream>();
+            _streams = new Dictionary<DateTime, StreamWriter>();
             _lock = new object();
             _timer = new Timer(ClosePastStreams, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
         }
@@ -36,15 +37,7 @@
         {
             lock (_lock)
             {
-                var stream = GetStream(date.Date);
-                var bytes = Encoding.UTF8.GetBytes(content + Environment.NewLine);
-
-                // making sure we append to the end of the file
-                // this is needed if something else wrote into the file
-                stream.Seek(0, SeekOrigin.End);
-
-                stream.Write(bytes, 0, bytes.Length);
-                stream.Flush();
+                GetStream(date.Date).WriteLine(content);
             }
         }
 
@@ -74,7 +67,7 @@
 
         [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope",
             Justification = "It's disposed on this class Dispose.")]
-        private FileStream GetStream(DateTime date)
+        private StreamWriter GetStream(DateTime date)
         {
             // Opening the stream if needed
             if (!_streams.ContainsKey(date))
@@ -87,7 +80,17 @@
                 Directory.CreateDirectory(_directory);
 
                 // Opening the stream
-                _streams[date] = File.Open(filepath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                var stream = new StreamWriter(
+                    // https://stackoverflow.com/q/1862309
+                    new FileStream(
+                        filepath, FileMode.Append, FileSystemRights.AppendData, FileShare.ReadWrite, 4096,
+                        FileOptions.None
+                    )
+                );
+                stream.AutoFlush = true;
+
+                // Storing the created stream
+                _streams[date] = stream;
             }
 
             return _streams[date];
