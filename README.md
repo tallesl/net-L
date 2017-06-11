@@ -69,19 +69,18 @@ The library works out-of-the-box, no configuration needed, but you can configure
 var myLogger = new L(
     new LConfiguration
     {
-        // True to use UTC date and time when logging, false to use local.
+        // True to use UTC time rather than local time.
         // Defaults to false.
         UseUtcTime = true,
+
+        // If other than null it sets to delete any file in the log folder that is older than the specified time.
+        // Defaults to null.
+        DeleteOldFiles = TimeSpan.FromDays(10),
     }
 );
 ```
 
 You can omit any of those configuration properties to use its default value.
-
-## Cleaning up
-
-You can set the library to clean itself by calling `CleanItself()`.
-It checks every 8 hours for files older than 10 days and then deletes it.
 
 ## But I want...
 

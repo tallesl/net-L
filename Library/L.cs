@@ -97,9 +97,27 @@
         public L(LConfiguration configuration)
         {
             _configuration = configuration;
+
             _directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
             _writer = new FileWriter(_directory);
-            _cleaner = null;
+
+            if (_configuration.DeleteOldFiles.HasValue)
+            {
+                var min = TimeSpan.FromSeconds(5);
+                var max = TimeSpan.FromHours(8);
+
+                var cleanUpTime = new TimeSpan(_configuration.DeleteOldFiles.Value.Ticks / 5);
+
+                if (cleanUpTime < min)
+                    cleanUpTime = min;
+
+                if (cleanUpTime > max)
+                    cleanUpTime = max;
+
+                _cleaner = _cleaner ?? new FreshFolder(_directory, _configuration.DeleteOldFiles.Value, cleanUpTime,
+                    FileTimestamp.Creation);
+            }
+
             _lock = new object();
             _longestLabel = 5;
             _disposed = false;
@@ -110,21 +128,6 @@
             get
             {
                 return _configuration.UseUtcTime ? DateTime.UtcNow : DateTime.Now;
-            }
-        }
-
-        /// <summary>
-        /// Sets it to delete any file in its folder that is older than 10 days.
-        /// </summary>
-        public void CleanItself()
-        {
-            lock (_lock)
-            {
-                if (_disposed)
-                    throw ObjectDisposedException;
-
-                _cleaner = _cleaner ?? new FreshFolder(_directory, TimeSpan.FromDays(10), TimeSpan.FromHours(8),
-                    FileTimestamp.Creation);
             }
         }
 
