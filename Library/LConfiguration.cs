@@ -1,6 +1,7 @@
 ﻿namespace LLibrary
 {
     using System;
+    using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
     /// Optional configurations that can be used when initializing the logger.
@@ -30,6 +31,15 @@
         /// A local "logs" directory by default.
         /// </summary>
         public string Directory { get; set; }
+
+        /// <summary>
+        /// Labels enabled to be logged by the library.
+        /// An attempt to log with a label that is not enabled is simply ignored, no error is raised.
+        /// Leave it empty or null to enable any label, which is the default.
+        /// </summary>
+        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays",
+            Justification = "The object it's passed by value (since it's a struct) plus is used just as configuration.")]
+        public string[] EnabledLabels { get; set; }
 
         public override bool Equals(object obj)
         {

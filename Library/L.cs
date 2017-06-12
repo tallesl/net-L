@@ -5,12 +5,15 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Logs in a log file the given information.
     /// </summary>
     public sealed class L : IDisposable
     {
+        private static Func<string, string> _sanitizeLabel = label => label.Trim().ToUpperInvariant();
+
         private static readonly object _staticLock = new object();
 
         private static L _static = null;
@@ -121,6 +124,9 @@
             if (string.IsNullOrEmpty(_configuration.DateTimeFormat))
                 _configuration.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
 
+            _configuration.EnabledLabels =
+                (_configuration.EnabledLabels ?? new string[0]).Select(l => _sanitizeLabel(l)).ToArray();
+
             _lock = new object();
             _longestLabel = 5;
             _disposed = false;
@@ -140,7 +146,8 @@
         /// <param name="label">Label to use when logging</param>
         /// <param name="content">A string with a message or an object to call ToString() on it/param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
-        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods", Justification = "The called function validates it.")]
+        [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
+            Justification = "The called function validates it.")]
         public void Log(Enum label, string content, params object[] args)
         {
             Log(label.ToString(), content, args);
@@ -160,14 +167,20 @@
             if (content == null)
                 throw new ArgumentNullException("content");
 
-            var date = Now;
-            var formattedDate = date.ToString(_configuration.DateTimeFormat, CultureInfo.InvariantCulture);
+            label = _sanitizeLabel(label);
+
+            if (_configuration.EnabledLabels.Any() && !_configuration.EnabledLabels.Contains(label))
+                return;
 
             _longestLabel = Math.Max(_longestLabel, label.Length);
-            label = label.Trim().ToUpperInvariant() + new string(' ', _longestLabel - label.Length);
 
+            var date = Now;
+            var formattedDate = date.ToString(_configuration.DateTimeFormat, CultureInfo.InvariantCulture);
+            var padding = new string(' ', _longestLabel - label.Length);
             var formattedContent = string.Format(CultureInfo.InvariantCulture, content.ToString(), args);
-            var line = string.Join(" ", formattedDate, label, formattedContent);
+
+            var line = string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}{3}", formattedDate, label, padding,
+                formattedContent);
 
             lock (_lock)
             {

@@ -6,7 +6,6 @@
     using System.Globalization;
     using System.IO;
     using System.Security.AccessControl;
-    using System.Text;
     using System.Threading;
 
     internal sealed class FileWriter : IDisposable
@@ -46,6 +45,7 @@
             lock (_lock)
             {
                 var today = DateTime.Today;
+
                 foreach (var stream in _streams)
                 {
                     if (stream.Key < today)

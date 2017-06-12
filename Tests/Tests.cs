@@ -2,15 +2,12 @@
 {
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Runtime.CompilerServices;
     using System.IO;
     using System.Globalization;
 
     [TestClass]
     public class Tests
     {
-        private L L;
-
         private string FilePath
         {
             get
@@ -38,71 +35,93 @@
             Bar,
         }
 
-        [TestInitialize]
-        public void Initialize()
-        {
-            L = new L();
-        }
-
         [TestCleanup]
         public void Cleanup()
         {
-            L.Dispose();
             File.Delete(FilePath);
         }
 
         [TestMethod]
         public void Vanilla()
         {
-            L.LogInfo("Some information.");
-            Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
+            using (var logger = new L())
+            {
+                logger.LogInfo("Some information.");
+                Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
+            }
         }
 
         [TestMethod]
         public void WithFormat()
         {
-            var e = new Exception("BOOM!");
-
-            L.LogError("A {0} happened: {1}", e.GetType(), e.Message);
-            Assert.IsTrue(FileContent.EndsWith("ERROR A System.Exception happened: BOOM!"));
+            using (var logger = new L())
+            {
+                logger.LogError("A {0} happened: {1}", typeof(Exception), "BOOM!");
+                Assert.IsTrue(FileContent.EndsWith("ERROR A System.Exception happened: BOOM!"));
+            }
         }
 
         [TestMethod]
         public void NotString()
         {
-            var e = new Exception("BOOM!");
-
-            L.LogError(e);
-            Assert.IsTrue(FileContent.EndsWith("ERROR System.Exception: BOOM!"));
+            using (var logger = new L())
+            {
+                logger.LogError(new Exception("BOOM!"));
+                Assert.IsTrue(FileContent.EndsWith("ERROR System.Exception: BOOM!"));
+            }
         }
 
         [TestMethod]
         public void NoWriteLock()
         {
-            L.LogInfo("Some information.");
-
-            using (var file = File.Open(FilePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
-            using (var writer = new StreamWriter(file))
+            using (var logger = new L())
             {
-                writer.WriteLine("Do a barrel roll!");
+                logger.LogInfo("Some information.");
+
+                using (var file = File.Open(FilePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
+                using (var writer = new StreamWriter(file))
+                {
+                    writer.WriteLine("Do a barrel roll!");
+                }
             }
         }
 
         [TestMethod]
         public void EnumAsLabel()
         {
-            L.Log(Enum.Foo, "Here's foo.");
-            Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
+            using (var logger = new L())
+            {
+                logger.Log(Enum.Foo, "Here's foo.");
+                Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
 
-            L.Log(Enum.Bar, "And here's bar.");
-            Assert.IsTrue(FileContent.EndsWith("BAR   And here's bar."));
+                logger.Log(Enum.Bar, "And here's bar.");
+                Assert.IsTrue(FileContent.EndsWith("BAR   And here's bar."));
+            }
         }
 
         [TestMethod, ExpectedException(typeof(ObjectDisposedException))]
         public void DisposedException()
         {
-            L.Dispose();
-            L.LogInfo("Some information.");
+            using (var logger = new L())
+            {
+                logger.Dispose();
+                logger.LogInfo("Some information.");
+            }
+        }
+
+        [TestMethod]
+        public void EnabledLabels()
+        {
+            var cfg = new LConfiguration { EnabledLabels = new[] { "FOO" } };
+
+            using (var logger = new L(cfg))
+            {
+                logger.Log(Enum.Foo, "Here's foo.");
+                Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
+
+                logger.Log(Enum.Bar, "And here's bar.");
+                Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
+            }
         }
     }
 }
