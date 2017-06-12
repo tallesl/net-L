@@ -10,26 +10,26 @@
     public struct LConfiguration
     {
         /// <summary>
-        /// Use UTC time rather than local time.
-        /// False by default.
+        /// True to use UTC time rather than local time.
+        /// Defaults to false.
         /// </summary>
         public bool UseUtcTime { get; set; }
 
         /// <summary>
-        /// Sets it to delete any file in the log folder that is older than the specified time.
-        /// Disabled by default.
+        /// If other than null it sets to delete any file in the log folder that is older than the specified time.
+        /// Defaults to null.
         /// </summary>
         public TimeSpan? DeleteOldFiles { get; set; }
 
         /// <summary>
         /// Format string to use when calling DateTime.Format.
-        /// "yyyy-MM-dd HH:mm:ss" by default.
+        /// Defaults to "yyyy-MM-dd HH:mm:ss".
         /// </summary>
         public string DateTimeFormat { get; set; }
 
         /// <summary>
         /// Directory where to create the log files.
-        /// A local "logs" directory by default.
+        /// Defautls to a local "logs" directory.
         /// </summary>
         public string Directory { get; set; }
 

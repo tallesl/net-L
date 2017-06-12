@@ -69,22 +69,29 @@ The library works out-of-the-box, no configuration needed, but you can configure
 var myLogger = new L(
     new LConfiguration
     {
-        // True to use UTC time rather than local time.
-        // Defaults to false.
-        UseUtcTime = true,
+        // Format string to use when calling DateTime.Format.
+        // Defaults to "yyyy-MM-dd HH:mm:ss".
+        DateTimeFormat = "dd MMM HH:mm:ss",
 
-        // If other than null it sets to delete any file in the log folder that is older than the specified time.
+        // If other than null it sets to delete any file in the log folder that is older than the time set.
         // Defaults to null.
         DeleteOldFiles = TimeSpan.FromDays(10),
 
         // Directory where to create the log files.
-        // A local "logs" directory by default.
+        // Defautls to a local "logs" directory.
         Directory = @"C:\custom-directory\my-logs\",
+
+        // Labels enabled to be logged by the library.
+        // An attempt to log with a label that is not enabled is simply ignored, no error is raised.
+        // Leave it empty or null to enable any label, which is the default.
+        EnabledLabels = new[] { "INFO", "ERROR", },
+
+        // True to use UTC time rather than local time.
+        // Defaults to false.
+        UseUtcTime = true,
     }
 );
 ```
-
-You can omit any of those configuration properties to use its default value.
 
 ## But I want...
 
