@@ -144,7 +144,7 @@
         /// Formats the given information and logs it.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
             Justification = "The called function validates it.")]
@@ -157,7 +157,7 @@
         /// Formats the given information and logs it.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void Log(string label, object content, params object[] args)
         {
@@ -194,7 +194,7 @@
         /// <summary>
         /// Formats the given information and logs it with DEBUG label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void LogDebug(object content, params object[] args)
         {
@@ -204,7 +204,7 @@
         /// <summary>
         /// Formats the given information and logs it with INFO label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void LogInfo(object content, params object[] args)
         {
@@ -214,7 +214,7 @@
         /// <summary>
         /// Formats the given information and logs it with WARN label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void LogWarn(object content, params object[] args)
         {
@@ -224,7 +224,7 @@
         /// <summary>
         /// Formats the given information and logs it with ERROR label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void LogError(object content, params object[] args)
         {
@@ -234,13 +234,16 @@
         /// <summary>
         /// Formats the given information and logs it with FATAL label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it/param>
+        /// <param name="content">A string with a message or an object to call ToString() on it</param>
         /// <param name="args">Arguments to use along string.Format on the given message</param>
         public void LogFatal(object content, params object[] args)
         {
             Log("FATAL", content, args);
         }
 
+        /// <summary>
+        /// Disposes the file writer and the directory cleaner used by this instance.
+        /// </summary>
         public void Dispose()
         {
             lock (_lock)
