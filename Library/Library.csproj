@@ -38,7 +38,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileWriter.cs" />
+    <Compile Include="OpenStreams.cs" />
     <Compile Include="FolderCleaner.cs" />
     <Compile Include="L.cs" />
     <Compile Include="LConfiguration.cs" />

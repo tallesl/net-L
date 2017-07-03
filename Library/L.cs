@@ -75,7 +75,7 @@
 
         private LConfiguration _configuration;
 
-        private FileWriter _writer;
+        private OpenStreams _openStreams;
 
         private FolderCleaner _cleaner;
 
@@ -101,7 +101,7 @@
             if (string.IsNullOrEmpty(_configuration.Directory))
                 _configuration.Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
 
-            _writer = new FileWriter(_configuration.Directory);
+            _openStreams = new OpenStreams(_configuration.Directory);
 
             if (_configuration.DeleteOldFiles.HasValue)
             {
@@ -117,7 +117,8 @@
                     cleanUpTime = max;
 
                 _cleaner =
-                    new FolderCleaner(_configuration.Directory, _configuration.DeleteOldFiles.Value, cleanUpTime);
+                    new FolderCleaner(
+                        _configuration.Directory, _openStreams, _configuration.DeleteOldFiles.Value, cleanUpTime);
             }
 
             if (string.IsNullOrEmpty(_configuration.DateTimeFormat))
@@ -186,7 +187,7 @@
                 if (_disposed)
                     throw ObjectDisposedException;
 
-                _writer.Append(date, line);
+                _openStreams.Append(date, line);
             }
         }
 
@@ -250,8 +251,8 @@
                 if (_disposed)
                     return;
 
-                if (_writer != null)
-                    _writer.Dispose();
+                if (_openStreams != null)
+                    _openStreams.Dispose();
 
                 if (_cleaner != null)
                     _cleaner.Dispose();

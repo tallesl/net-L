@@ -5,10 +5,11 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
     using System.Security.AccessControl;
     using System.Threading;
 
-    internal sealed class FileWriter : IDisposable
+    internal sealed class OpenStreams : IDisposable
     {
         private readonly string _directory;
 
@@ -18,7 +19,7 @@
 
         private readonly object _lock;
 
-        internal FileWriter(string directory)
+        internal OpenStreams(string directory)
         {
             _directory = directory;
             _streams = new Dictionary<DateTime, StreamWriter>();
@@ -40,16 +41,22 @@
             }
         }
 
+        internal string[] Filepaths()
+        {
+            return _streams.Values.Select(s => s.BaseStream).Cast<FileStream>().Select(s => s.Name).ToArray();
+        }
+
         private void ClosePastStreams(object ignored)
         {
             lock (_lock)
             {
                 var today = DateTime.Today;
+                var past = _streams.Where(kvp => kvp.Key < today);
 
-                foreach (var stream in _streams)
+                foreach (var kvp in past)
                 {
-                    if (stream.Key < today)
-                        stream.Value.Dispose();
+                    kvp.Value.Dispose();
+                    _streams.Remove(kvp.Key);
                 }
             }
         }

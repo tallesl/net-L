@@ -1,28 +1,27 @@
 ﻿namespace LLibrary
 {
     using System;
-    using System.ComponentModel;
-    using System.Diagnostics.CodeAnalysis;
     using System.IO;
+    using System.Linq;
     using System.Threading;
 
     internal sealed class FolderCleaner : IDisposable
     {
         private readonly string _path;
 
-        private readonly TimeSpan _threshold;
+        private readonly OpenStreams _openStreams;
 
-        private readonly TimeSpan _interval;
+        private readonly TimeSpan _threshold;
 
         private readonly object _cleanLock;
 
         private readonly Timer _timer;
 
-        internal FolderCleaner(string path, TimeSpan threshold, TimeSpan interval)
+        internal FolderCleaner(string path, OpenStreams streams, TimeSpan threshold, TimeSpan interval)
         {
             _path = path;
+            _openStreams = streams;
             _threshold = threshold;
-            _interval = interval;
             _cleanLock = new object();
             _timer = new Timer(Clean, null, TimeSpan.Zero, interval);
         }
@@ -39,10 +38,13 @@
         {
             lock (_cleanLock)
             {
-                var now = DateTime.Now;
                 if (Directory.Exists(_path))
                 {
-                    foreach (var filepath in Directory.GetFiles(_path))
+                    var now = DateTime.Now;
+                    var openFiles = _openStreams.Filepaths();
+                    var files = Directory.GetFiles(_path).Except(openFiles);
+
+                    foreach (var filepath in files)
                     {
                         var file = new FileInfo(filepath);
                         var lifetime = now - file.CreationTime;
