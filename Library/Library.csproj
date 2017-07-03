@@ -35,20 +35,14 @@
     <DocumentationFile>bin\Release\L.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Fresh, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Fresh.2.0.0\lib\Fresh.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileWriter.cs" />
+    <Compile Include="FolderCleaner.cs" />
     <Compile Include="L.cs" />
     <Compile Include="LConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

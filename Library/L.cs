@@ -1,6 +1,5 @@
 ﻿namespace LLibrary
 {
-    using FreshLibrary;
     using System;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
@@ -78,7 +77,7 @@
 
         private FileWriter _writer;
 
-        private FreshFolder _cleaner;
+        private FolderCleaner _cleaner;
 
         private object _lock;
 
@@ -117,8 +116,8 @@
                 if (cleanUpTime > max)
                     cleanUpTime = max;
 
-                _cleaner = new FreshFolder(_configuration.Directory, _configuration.DeleteOldFiles.Value, cleanUpTime,
-                    FileTimestamp.Creation);
+                _cleaner =
+                    new FolderCleaner(_configuration.Directory, _configuration.DeleteOldFiles.Value, cleanUpTime);
             }
 
             if (string.IsNullOrEmpty(_configuration.DateTimeFormat))
