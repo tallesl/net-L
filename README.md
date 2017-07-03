@@ -9,7 +9,7 @@
 [![][build-img]][build]
 [![][nuget-img]][nuget]
 
-A configless .NET file logger.
+Logging as simple as it can be.
 
 Most of the time I don't need a sophisticated logger and I got tired of [configuring the same thing for log4net] over
 and over again.
