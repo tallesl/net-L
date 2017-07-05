@@ -7,7 +7,7 @@
 
     internal sealed class FolderCleaner : IDisposable
     {
-        private readonly string _path;
+        private readonly string _directory;
 
         private readonly OpenStreams _openStreams;
 
@@ -19,7 +19,7 @@
 
         internal FolderCleaner(string path, OpenStreams streams, TimeSpan threshold, TimeSpan interval)
         {
-            _path = path;
+            _directory = path;
             _openStreams = streams;
             _threshold = threshold;
             _cleanLock = new object();
@@ -38,11 +38,11 @@
         {
             lock (_cleanLock)
             {
-                if (Directory.Exists(_path))
+                if (Directory.Exists(_directory))
                 {
                     var now = DateTime.Now;
                     var openFiles = _openStreams.Filepaths();
-                    var files = Directory.GetFiles(_path).Except(openFiles);
+                    var files = Directory.GetFiles(_directory).Except(openFiles);
 
                     foreach (var filepath in files)
                     {
