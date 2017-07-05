@@ -29,7 +29,7 @@
 
         /// <summary>
         /// Directory where to create the log files.
-        /// Defautls to a local "logs" directory.
+        /// Defaults to a local "logs" directory.
         /// </summary>
         public string Directory { get; set; }
 
