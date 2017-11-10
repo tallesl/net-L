@@ -42,22 +42,12 @@
         }
 
         [TestMethod]
-        public void Vanilla()
+        public void String()
         {
             using (var logger = new L())
             {
                 logger.LogInfo("Some information.");
                 Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
-            }
-        }
-
-        [TestMethod]
-        public void WithFormat()
-        {
-            using (var logger = new L())
-            {
-                logger.LogError("A {0} happened: {1}", typeof(Exception), "BOOM!");
-                Assert.IsTrue(FileContent.EndsWith("ERROR A System.Exception happened: BOOM!"));
             }
         }
 

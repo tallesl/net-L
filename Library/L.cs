@@ -145,12 +145,11 @@
         /// </summary>
         /// <param name="label">Label to use when logging</param>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
             Justification = "The called function validates it.")]
-        public void Log(Enum label, string content, params object[] args)
+        public void Log(Enum label, string content)
         {
-            Log(label.ToString(), content, args);
+            Log(label.ToString(), content);
         }
 
         /// <summary>
@@ -158,8 +157,7 @@
         /// </summary>
         /// <param name="label">Label to use when logging</param>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void Log(string label, object content, params object[] args)
+        public void Log(string label, object content)
         {
             if (label == null)
                 throw new ArgumentNullException("label");
@@ -177,10 +175,9 @@
             var date = Now;
             var formattedDate = date.ToString(_configuration.DateTimeFormat, CultureInfo.InvariantCulture);
             var padding = new string(' ', _longestLabel - label.Length);
-            var formattedContent = string.Format(CultureInfo.InvariantCulture, content.ToString(), args);
 
             var line = string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}{3}", formattedDate, label, padding,
-                formattedContent);
+                content);
 
             lock (_lock)
             {
@@ -195,50 +192,45 @@
         /// Formats the given information and logs it with DEBUG label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogDebug(object content, params object[] args)
+        public void LogDebug(object content)
         {
-            Log("DEBUG", content, args);
+            Log("DEBUG", content);
         }
 
         /// <summary>
         /// Formats the given information and logs it with INFO label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogInfo(object content, params object[] args)
+        public void LogInfo(object content)
         {
-            Log("INFO", content, args);
+            Log("INFO", content);
         }
 
         /// <summary>
         /// Formats the given information and logs it with WARN label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogWarn(object content, params object[] args)
+        public void LogWarn(object content)
         {
-            Log("WARN", content, args);
+            Log("WARN", content);
         }
 
         /// <summary>
         /// Formats the given information and logs it with ERROR label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogError(object content, params object[] args)
+        public void LogError(object content)
         {
-            Log("ERROR", content, args);
+            Log("ERROR", content);
         }
 
         /// <summary>
         /// Formats the given information and logs it with FATAL label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        /// <param name="args">Arguments to use along string.Format on the given message</param>
-        public void LogFatal(object content, params object[] args)
+        public void LogFatal(object content)
         {
-            Log("FATAL", content, args);
+            Log("FATAL", content);
         }
 
         /// <summary>
