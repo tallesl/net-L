@@ -47,10 +47,7 @@
         /// <summary>
         /// Initializes the static instance using the default configuration.
         /// </summary>
-        public static void InitializeStatic()
-        {
-            InitializeStatic(new LConfiguration());
-        }
+        public static void InitializeStatic() => InitializeStatic(new LConfiguration());
 
         /// <summary>
         /// Initializes the static instance using the given configuration.
@@ -147,10 +144,7 @@
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
             Justification = "The called function validates it.")]
-        public void Log(Enum label, string content)
-        {
-            Log(label.ToString(), content);
-        }
+        public void Log(Enum label, string content) => Log(label.ToString(), content);
 
         /// <summary>
         /// Formats the given information and logs it.
@@ -192,46 +186,31 @@
         /// Formats the given information and logs it with DEBUG label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogDebug(object content)
-        {
-            Log("DEBUG", content);
-        }
+        public void LogDebug(object content) => Log("DEBUG", content);
 
         /// <summary>
         /// Formats the given information and logs it with INFO label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogInfo(object content)
-        {
-            Log("INFO", content);
-        }
+        public void LogInfo(object content) => Log("INFO", content);
 
         /// <summary>
         /// Formats the given information and logs it with WARN label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogWarn(object content)
-        {
-            Log("WARN", content);
-        }
+        public void LogWarn(object content) => Log("WARN", content);
 
         /// <summary>
         /// Formats the given information and logs it with ERROR label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogError(object content)
-        {
-            Log("ERROR", content);
-        }
+        public void LogError(object content) => Log("ERROR", content);
 
         /// <summary>
         /// Formats the given information and logs it with FATAL label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogFatal(object content)
-        {
-            Log("FATAL", content);
-        }
+        public void LogFatal(object content) => Log("FATAL", content);
 
         /// <summary>
         /// Disposes the file writer and the directory cleaner used by this instance.

@@ -38,20 +38,20 @@
         {
             lock (_cleanLock)
             {
-                if (Directory.Exists(_directory))
+                if (!Directory.Exists(_directory))
+                    return;
+
+                var now = DateTime.Now;
+                var openFiles = _openStreams.Filepaths();
+                var files = Directory.GetFiles(_directory).Except(openFiles);
+
+                foreach (var filepath in files)
                 {
-                    var now = DateTime.Now;
-                    var openFiles = _openStreams.Filepaths();
-                    var files = Directory.GetFiles(_directory).Except(openFiles);
+                    var file = new FileInfo(filepath);
+                    var lifetime = now - file.CreationTime;
 
-                    foreach (var filepath in files)
-                    {
-                        var file = new FileInfo(filepath);
-                        var lifetime = now - file.CreationTime;
-
-                        if (lifetime >= _threshold)
-                            file.Delete();
-                    }
+                    if (lifetime >= _threshold)
+                        file.Delete();
                 }
             }
         }

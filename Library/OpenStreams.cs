@@ -41,10 +41,8 @@
             }
         }
 
-        internal string[] Filepaths()
-        {
-            return _streams.Values.Select(s => s.BaseStream).Cast<FileStream>().Select(s => s.Name).ToArray();
-        }
+        internal string[] Filepaths() =>
+            _streams.Values.Select(s => s.BaseStream).Cast<FileStream>().Select(s => s.Name).ToArray();
 
         private void ClosePastStreams(object ignored)
         {

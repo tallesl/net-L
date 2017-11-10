@@ -1,9 +1,9 @@
 ﻿namespace LLibrary.Tests
 {
-    using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.IO;
+    using System;
     using System.Globalization;
+    using System.IO;
 
     [TestClass]
     public class Tests
@@ -12,8 +12,7 @@
         {
             get
             {
-                var today = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-                return string.Format(@"logs\{0}.log", today);
+                return $@"logs\{DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}.log";
             }
         }
 
@@ -36,10 +35,7 @@
         }
 
         [TestCleanup]
-        public void Cleanup()
-        {
-            File.Delete(FilePath);
-        }
+        public void Cleanup() => File.Delete(FilePath);
 
         [TestMethod]
         public void String()
