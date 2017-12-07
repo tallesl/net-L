@@ -138,7 +138,7 @@
         }
 
         /// <summary>
-        /// Formats the given information and logs it.
+        /// Logs the given information.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
@@ -170,8 +170,7 @@
             var formattedDate = date.ToString(_configuration.DateTimeFormat, CultureInfo.InvariantCulture);
             var padding = new string(' ', _longestLabel - label.Length);
 
-            var line = string.Format(CultureInfo.InvariantCulture, "{0} {1} {2}{3}", formattedDate, label, padding,
-                content);
+            var line = $"{formattedDate} {label} {padding}{content}";
 
             lock (_lock)
             {
@@ -183,31 +182,31 @@
         }
 
         /// <summary>
-        /// Formats the given information and logs it with DEBUG label.
+        /// Logs the given information with DEBUG label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
         public void LogDebug(object content) => Log("DEBUG", content);
 
         /// <summary>
-        /// Formats the given information and logs it with INFO label.
+        /// Logs the given information with INFO label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
         public void LogInfo(object content) => Log("INFO", content);
 
         /// <summary>
-        /// Formats the given information and logs it with WARN label.
+        /// Logs the given information with WARN label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
         public void LogWarn(object content) => Log("WARN", content);
 
         /// <summary>
-        /// Formats the given information and logs it with ERROR label.
+        /// Logs the given information with ERROR label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
         public void LogError(object content) => Log("ERROR", content);
 
         /// <summary>
-        /// Formats the given information and logs it with FATAL label.
+        /// Logs the given information with FATAL label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
         public void LogFatal(object content) => Log("FATAL", content);

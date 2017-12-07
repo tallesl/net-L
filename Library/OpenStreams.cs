@@ -78,7 +78,7 @@
             if (!_streams.ContainsKey(date))
             {
                 // Building stream's filepath
-                var filename = date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ".log";
+                var filename = $"{date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)}.log";
                 var filepath = Path.Combine(_directory, filename);
 
                 // Making sure the directory exists
