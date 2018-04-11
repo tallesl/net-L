@@ -49,7 +49,7 @@
             lock (_lock)
             {
                 var today = DateTime.Today;
-                var past = _streams.Where(kvp => kvp.Key < today);
+                var past = _streams.Where(kvp => kvp.Key < today).ToList();
 
                 foreach (var kvp in past)
                 {
