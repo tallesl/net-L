@@ -50,11 +50,14 @@
             {
                 var today = DateTime.Today;
                 var past = _streams.Where(kvp => kvp.Key < today);
-
-                foreach (var kvp in past)
+                if (past.Any())
                 {
-                    kvp.Value.Dispose();
-                    _streams.Remove(kvp.Key);
+                    var clonePast = past.ToList();
+                    foreach (var kvp in clonePast)
+                    {
+                        kvp.Value.Dispose();
+                        _streams.Remove(kvp.Key);
+                    }
                 }
             }
         }
