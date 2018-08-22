@@ -41,7 +41,9 @@
         /// If other than null it sets to delete any file in the log folder that is older than the specified time
         /// </param>
         /// <param name="dateTimeFormat">Format string to use when calling DateTime.Format</param>
-        /// <param name="directory">Directory where to create the log files</param>
+        /// <param name="directory">
+        /// Directory where to create the log files, null to use a local "logs" directory
+        /// guit</param>
         /// <param name="enabledLabels">
         /// Labels enabled to be logged by the library, an attempt to log with a label that is not enabled is ignored
         /// (no error is raised), null or empty enables all labels
@@ -134,31 +136,31 @@
         /// Logs the given information with DEBUG label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogDebug(object content) => Log("DEBUG", content);
+        public void Debug(object content) => Log("DEBUG", content);
 
         /// <summary>
         /// Logs the given information with INFO label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogInfo(object content) => Log("INFO", content);
+        public void Info(object content) => Log("INFO", content);
 
         /// <summary>
         /// Logs the given information with WARN label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogWarn(object content) => Log("WARN", content);
+        public void Warn(object content) => Log("WARN", content);
 
         /// <summary>
         /// Logs the given information with ERROR label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogError(object content) => Log("ERROR", content);
+        public void Error(object content) => Log("ERROR", content);
 
         /// <summary>
         /// Logs the given information with FATAL label.
         /// </summary>
         /// <param name="content">A string with a message or an object to call ToString() on it</param>
-        public void LogFatal(object content) => Log("FATAL", content);
+        public void Fatal(object content) => Log("FATAL", content);
 
         /// <summary>
         /// Disposes the file writer and the directory cleaner used by this instance.

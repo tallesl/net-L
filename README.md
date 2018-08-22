@@ -22,8 +22,6 @@ and over again.
 
 ## Usage
 
-Just instantiate and use it:
-
 ```cs
 using LLibrary;
 
@@ -33,17 +31,14 @@ myLogger.Log("INFO", "Some information");
 myLogger.Log("ERROR", new Exception("BOOM!"));
 ```
 
-You can use built-in methods for the classical DEBUG, INFO, WARN, ERROR, FATAL labels (but there's no idea of a 
-logging level here, they're just labels):
+You can use built-in methods for the classical DEBUG, INFO, WARN, ERROR, FATAL labels (but there's no logging level here, they're just labels):
 
 ```cs
-myLogger.LogInfo("Some information");
-myLogger.LogError(new Exception("BOOM!"));
+myLogger.Info("Some information");
+myLogger.Error(new Exception("BOOM!"));
 ```
 
-A file named `yyyy-MM-dddd.log` will be created in a `logs` folder (relative from where the application is running). 
-
-The code above could yield, for instance, a file named `2014-12-16.log` with the content of:
+A file named `yyyy-MM-dddd.log` will be created in a `logs` folder (located where the application is running), like `2014-12-16.log` containing:
 
 ```
 2014-12-16 19:21:45 INFO  Some information.

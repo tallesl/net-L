@@ -42,7 +42,7 @@
         {
             using (var logger = new L())
             {
-                logger.LogInfo("Some information.");
+                logger.Info("Some information.");
                 Assert.IsTrue(FileContent.EndsWith("INFO  Some information."));
             }
         }
@@ -52,7 +52,7 @@
         {
             using (var logger = new L())
             {
-                logger.LogError(new Exception("BOOM!"));
+                logger.Error(new Exception("BOOM!"));
                 Assert.IsTrue(FileContent.EndsWith("ERROR System.Exception: BOOM!"));
             }
         }
@@ -62,7 +62,7 @@
         {
             using (var logger = new L())
             {
-                logger.LogInfo("Some information.");
+                logger.Info("Some information.");
 
                 using (var file = File.Open(FilePath, FileMode.Open, FileAccess.Write, FileShare.ReadWrite))
                 using (var writer = new StreamWriter(file))
@@ -91,7 +91,7 @@
             using (var logger = new L())
             {
                 logger.Dispose();
-                logger.LogInfo("Some information.");
+                logger.Info("Some information.");
             }
         }
 
