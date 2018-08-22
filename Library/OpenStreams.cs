@@ -6,7 +6,6 @@
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Security.AccessControl;
     using System.Threading;
 
     internal sealed class OpenStreams : IDisposable
@@ -86,11 +85,7 @@
 
                 // Opening the stream
                 var stream = new StreamWriter(
-                    // https://stackoverflow.com/q/1862309
-                    new FileStream(
-                        filepath, FileMode.Append, FileSystemRights.AppendData, FileShare.ReadWrite, 4096,
-                        FileOptions.None
-                    )
+                    File.Open(filepath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite)
                 );
                 stream.AutoFlush = true;
 
