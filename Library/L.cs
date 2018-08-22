@@ -13,63 +13,6 @@
     {
         private static Func<string, string> _sanitizeLabel = label => label.Trim().ToUpperInvariant();
 
-        private static readonly object _staticLock = new object();
-
-        private static L _static = null;
-
-        private static ObjectDisposedException ObjectDisposedException
-        {
-            get
-            {
-                return new ObjectDisposedException("Cannot access a disposed object.");
-            }
-        }
-
-        /// <summary>
-        /// A static instance for you to use in case you don't want to instantiate and hold a reference yourself.
-        /// It hooks its Dispose() method to ProcessExit or DomainUnload, so you don't have to manually dispose it.
-        /// You must call InitializeStatic before using this instance.
-        /// </summary>
-        public static L Static
-        {
-            get
-            {
-                lock (_staticLock)
-                {
-                    if (_static == null)
-                        throw new InvalidOperationException("The static instance has not been initialized.");
-
-                    return _static;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Initializes the static instance using the default configuration.
-        /// </summary>
-        public static void InitializeStatic() => InitializeStatic(new LConfiguration());
-
-        /// <summary>
-        /// Initializes the static instance using the given configuration.
-        /// </summary>
-        /// <param name="configuration">Configuration to use</param>
-        public static void InitializeStatic(LConfiguration configuration)
-        {
-            lock (_staticLock)
-            {
-                if (_static != null && !_static._disposed)
-                    throw new InvalidOperationException("The static instance is already initialized.");
-
-                _static = new L(configuration);
-
-                // http://stackoverflow.com/q/16673332
-                if (AppDomain.CurrentDomain.IsDefaultAppDomain())
-                    AppDomain.CurrentDomain.ProcessExit += (sender, e) => _static.Dispose();
-                else
-                    AppDomain.CurrentDomain.DomainUnload += (sender, e) => _static.Dispose();
-            }
-        }
-
         private LConfiguration _configuration;
 
         private OpenStreams _openStreams;
@@ -175,7 +118,7 @@
             lock (_lock)
             {
                 if (_disposed)
-                    throw ObjectDisposedException;
+                    throw new ObjectDisposedException("Cannot access a disposed object.");
 
                 _openStreams.Append(date, line);
             }
