@@ -13,11 +13,15 @@
     {
         private static Func<string, string> _sanitizeLabel = label => label.Trim().ToUpperInvariant();
 
-        private LConfiguration _configuration;
+        private readonly bool _useUtcTime;
 
-        private OpenStreams _openStreams;
+        private readonly TimeSpan? _deleteOldFiles;
 
-        private FolderCleaner _cleaner;
+        private readonly string _dateTimeFormat;
+
+        private readonly string _directory;
+
+        private readonly string[] _enabledLabels;
 
         private object _lock;
 
@@ -25,30 +29,44 @@
 
         private bool _disposed;
 
-        /// <summary>
-        /// Constructs the logger using the default configuration.
-        /// </summary>
-        public L() : this(new LConfiguration()) { }
+        private OpenStreams _openStreams;
+
+        private FolderCleaner _cleaner;
 
         /// <summary>
         /// Constructs the logger using the given configuration.
         /// </summary>
-        /// <param name="configuration">Configuration to use</param>
-        public L(LConfiguration configuration)
+        /// <param name="useUtcTime">True to use UTC time rather than local time</param>
+        /// <param name="deleteOldFiles">
+        /// If other than null it sets to delete any file in the log folder that is older than the specified time
+        /// </param>
+        /// <param name="dateTimeFormat">Format string to use when calling DateTime.Format</param>
+        /// <param name="directory">Directory where to create the log files</param>
+        /// <param name="enabledLabels">
+        /// Labels enabled to be logged by the library, an attempt to log with a label that is not enabled is ignored
+        /// (no error is raised), null or empty enables all labels
+        /// </param>
+        public L(
+            bool useUtcTime = false, TimeSpan? deleteOldFiles = null, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss",
+            string directory = null, params string[] enabledLabels)
         {
-            _configuration = configuration;
+            _useUtcTime = useUtcTime;
+            _deleteOldFiles = deleteOldFiles;
+            _dateTimeFormat = dateTimeFormat;
+            _directory = directory ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            _enabledLabels = (enabledLabels ?? new string[0]).Select(l => _sanitizeLabel(l)).ToArray();
 
-            if (string.IsNullOrEmpty(_configuration.Directory))
-                _configuration.Directory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            _lock = new object();
+            _longestLabel = 5;
+            _disposed = false;
+            _openStreams = new OpenStreams(_directory);
 
-            _openStreams = new OpenStreams(_configuration.Directory);
-
-            if (_configuration.DeleteOldFiles.HasValue)
+            if (_deleteOldFiles.HasValue)
             {
                 var min = TimeSpan.FromSeconds(5);
                 var max = TimeSpan.FromHours(8);
 
-                var cleanUpTime = new TimeSpan(_configuration.DeleteOldFiles.Value.Ticks / 5);
+                var cleanUpTime = new TimeSpan(_deleteOldFiles.Value.Ticks / 5);
 
                 if (cleanUpTime < min)
                     cleanUpTime = min;
@@ -56,27 +74,15 @@
                 if (cleanUpTime > max)
                     cleanUpTime = max;
 
-                _cleaner =
-                    new FolderCleaner(
-                        _configuration.Directory, _openStreams, _configuration.DeleteOldFiles.Value, cleanUpTime);
+                _cleaner = new FolderCleaner(_directory, _openStreams, _deleteOldFiles.Value, cleanUpTime);
             }
-
-            if (string.IsNullOrEmpty(_configuration.DateTimeFormat))
-                _configuration.DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
-
-            _configuration.EnabledLabels =
-                (_configuration.EnabledLabels ?? new string[0]).Select(l => _sanitizeLabel(l)).ToArray();
-
-            _lock = new object();
-            _longestLabel = 5;
-            _disposed = false;
         }
 
         private DateTime Now
         {
             get
             {
-                return _configuration.UseUtcTime ? DateTime.UtcNow : DateTime.Now;
+                return _useUtcTime ? DateTime.UtcNow : DateTime.Now;
             }
         }
 
@@ -104,13 +110,13 @@
 
             label = _sanitizeLabel(label);
 
-            if (_configuration.EnabledLabels.Any() && !_configuration.EnabledLabels.Contains(label))
+            if (_enabledLabels.Any() && !_enabledLabels.Contains(label))
                 return;
 
             _longestLabel = Math.Max(_longestLabel, label.Length);
 
             var date = Now;
-            var formattedDate = date.ToString(_configuration.DateTimeFormat, CultureInfo.InvariantCulture);
+            var formattedDate = date.ToString(_dateTimeFormat, CultureInfo.InvariantCulture);
             var padding = new string(' ', _longestLabel - label.Length);
 
             var line = $"{formattedDate} {label} {padding}{content}";

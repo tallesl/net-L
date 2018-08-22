@@ -98,9 +98,7 @@
         [TestMethod]
         public void EnabledLabels()
         {
-            var cfg = new LConfiguration { EnabledLabels = new[] { "FOO" } };
-
-            using (var logger = new L(cfg))
+            using (var logger = new L(enabledLabels: "FOO"))
             {
                 logger.Log(Enum.Foo, "Here's foo.");
                 Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));

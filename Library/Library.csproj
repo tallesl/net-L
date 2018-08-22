@@ -41,7 +41,6 @@
     <Compile Include="OpenStreams.cs" />
     <Compile Include="FolderCleaner.cs" />
     <Compile Include="L.cs" />
-    <Compile Include="LConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

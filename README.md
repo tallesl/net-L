@@ -50,46 +50,31 @@ The code above could yield, for instance, a file named `2014-12-16.log` with the
 2014-12-16 19:21:52 ERROR A System.Exception happened: BOOM!
 ```
 
-## Static
-
-There's a handy static instance for you to use in case you don't want to instantiate and hold a reference yourself:
-
-```cs
-L.InitializeStatic();
-
-L.Static.Log("INFO", "Some information");
-L.Static.Log("ERROR", new Exception("BOOM!"));
-```
-
 ## Configuration
 
-The library works out-of-the-box, no configuration needed, but you can configure a thing or two if you want:
+The library works out-of-the-box without configuration, but you can configure a thing or two if you want:
 
 ```cs
 var myLogger = new L(
-    new LConfiguration
-    {
-        // Format string to use when calling DateTime.Format.
-        // Defaults to "yyyy-MM-dd HH:mm:ss".
-        DateTimeFormat = "dd MMM HH:mm:ss",
+    // True to use UTC time rather than local time.
+    // Defaults to false.
+    useUtcTime: true,
 
-        // If other than null it sets to delete any file in the log folder that is older than the time set.
-        // Defaults to null.
-        DeleteOldFiles = TimeSpan.FromDays(10),
+    // If other than null it sets to delete any file in the log folder that is older than the time set.
+    // Defaults to null.
+    deleteOldFiles: TimeSpan.FromDays(10),
 
-        // Directory where to create the log files.
-        // Defautls to a local "logs" directory.
-        Directory = @"C:\custom-directory\my-logs\",
+    // Format string to use when calling DateTime.Format.
+    // Defaults to "yyyy-MM-dd HH:mm:ss".
+    dateTimeFormat: "dd MMM HH:mm:ss",
 
-        // Labels enabled to be logged by the library.
-        // An attempt to log with a label that is not enabled is simply ignored, no error is raised.
-        // Leave it empty or null to enable any label, which is the default.
-        EnabledLabels = new[] { "INFO", "ERROR", },
+    // Directory where to create the log files.
+    // Defaults to null, which creates a local "logs" directory.
+    directory: @"C:\custom-directory\my-logs\",
 
-        // True to use UTC time rather than local time.
-        // Defaults to false.
-        UseUtcTime = true,
-    }
+    // Labels enabled to be logged by the library, an attempt to log with a label that is not enabled is ignored (no error is raised), null or empty enables all labels.
+    // Defaults to null.
+    enabledLabels: "INFO", "ERROR"
 );
 ```
 
