@@ -101,10 +101,10 @@
             using (var logger = new L(enabledLabels: "FOO"))
             {
                 logger.Log(Enum.Foo, "Here's foo.");
-                Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
+                Assert.IsTrue(FileContent.EndsWith("FOO Here's foo."));
 
                 logger.Log(Enum.Bar, "And here's bar.");
-                Assert.IsTrue(FileContent.EndsWith("FOO   Here's foo."));
+                Assert.IsTrue(FileContent.EndsWith("FOO Here's foo."));
             }
         }
     }

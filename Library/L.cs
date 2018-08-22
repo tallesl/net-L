@@ -11,8 +11,6 @@
     /// </summary>
     public sealed class L : IDisposable
     {
-        private static Func<string, string> _sanitizeLabel = label => label.Trim().ToUpperInvariant();
-
         private readonly bool _useUtcTime;
 
         private readonly TimeSpan? _deleteOldFiles;
@@ -23,15 +21,15 @@
 
         private readonly string[] _enabledLabels;
 
-        private object _lock;
+        private readonly object _lock;
+
+        private readonly OpenStreams _openStreams;
+
+        private readonly FolderCleaner _cleaner;
 
         private int _longestLabel;
 
         private bool _disposed;
-
-        private OpenStreams _openStreams;
-
-        private FolderCleaner _cleaner;
 
         /// <summary>
         /// Constructs the logger using the given configuration.
@@ -56,11 +54,8 @@
             _deleteOldFiles = deleteOldFiles;
             _dateTimeFormat = dateTimeFormat;
             _directory = directory ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            _enabledLabels = (enabledLabels ?? new string[0]).Select(l => _sanitizeLabel(l)).ToArray();
-
+            _enabledLabels = (enabledLabels ?? new string[0]).Select(Normalize).ToArray();
             _lock = new object();
-            _longestLabel = 5;
-            _disposed = false;
             _openStreams = new OpenStreams(_directory);
 
             if (_deleteOldFiles.HasValue)
@@ -78,15 +73,12 @@
 
                 _cleaner = new FolderCleaner(_directory, _openStreams, _deleteOldFiles.Value, cleanUpTime);
             }
+
+            _longestLabel = _enabledLabels.Any() ? _enabledLabels.Select(l => l.Length).Max() : 5;
+            _disposed = false;
         }
 
-        private DateTime Now
-        {
-            get
-            {
-                return _useUtcTime ? DateTime.UtcNow : DateTime.Now;
-            }
-        }
+        private DateTime Now => _useUtcTime ? DateTime.UtcNow : DateTime.Now;
 
         /// <summary>
         /// Logs the given information.
@@ -110,7 +102,7 @@
             if (content == null)
                 throw new ArgumentNullException("content");
 
-            label = _sanitizeLabel(label);
+            label = Normalize(label);
 
             if (_enabledLabels.Any() && !_enabledLabels.Contains(label))
                 return;
@@ -181,5 +173,7 @@
                 _disposed = true;
             }
         }
+
+        private string Normalize(string label) => label.Trim().ToUpperInvariant();
     }
 }
