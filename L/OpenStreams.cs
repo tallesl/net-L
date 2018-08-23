@@ -23,7 +23,7 @@
             _directory = directory;
             _streams = new Dictionary<DateTime, StreamWriter>();
             _lock = new object();
-            _timer = new Timer(ClosePastStreams, null, 0, (long)TimeSpan.FromHours(2).TotalMilliseconds);
+            _timer = new Timer(ClosePastStreams, null, 0, (int)TimeSpan.FromHours(2).TotalMilliseconds);
         }
 
         public void Dispose()

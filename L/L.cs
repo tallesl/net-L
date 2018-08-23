@@ -41,7 +41,7 @@
         /// <param name="dateTimeFormat">Format string to use when calling DateTime.Format</param>
         /// <param name="directory">
         /// Directory where to create the log files, null to use a local "logs" directory
-        /// guit</param>
+        /// </param>
         /// <param name="enabledLabels">
         /// Labels enabled to be logged by the library, an attempt to log with a label that is not enabled is ignored
         /// (no error is raised), null or empty enables all labels
@@ -53,7 +53,7 @@
             _useUtcTime = useUtcTime;
             _deleteOldFiles = deleteOldFiles;
             _dateTimeFormat = dateTimeFormat;
-            _directory = directory ?? Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
+            _directory = directory ?? Path.Combine(AppContext.BaseDirectory, "logs");
             _enabledLabels = (enabledLabels ?? new string[0]).Select(Normalize).ToArray();
             _lock = new object();
             _openStreams = new OpenStreams(_directory);

@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyTitle>L</AssemblyTitle>
+    <AssemblyVersion>5.0.0.0</AssemblyVersion>
+    <Authors>Talles L &lt;talleslasmar@gmail.com&gt;</Authors>
+    <Description>Logging as simple as it can be.</Description>
+    <FileVersion>5.0.0.0</FileVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageTags>log;logging;zero;configuration</PackageTags>
+    <PackageVersion>5.0.0</PackageVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+</Project>
