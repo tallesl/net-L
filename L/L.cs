@@ -11,6 +11,8 @@
     /// </summary>
     public sealed class L : IDisposable
     {
+        private readonly bool _printToStandardOut;
+
         private readonly bool _useUtcTime;
 
         private readonly TimeSpan? _deleteOldFiles;
@@ -48,8 +50,9 @@
         /// </param>
         public L(
             bool useUtcTime = false, TimeSpan? deleteOldFiles = null, string dateTimeFormat = "yyyy-MM-dd HH:mm:ss",
-            string directory = null, params string[] enabledLabels)
+            string directory = null, bool printToStandardOut = false, params string[] enabledLabels)
         {
+            _printToStandardOut = printToStandardOut;
             _useUtcTime = useUtcTime;
             _deleteOldFiles = deleteOldFiles;
             _dateTimeFormat = dateTimeFormat;
@@ -114,6 +117,10 @@
             var padding = new string(' ', _longestLabel - label.Length);
 
             var line = $"{formattedDate} {label} {padding}{content}";
+
+            if (_printToStandardOut) {
+                Console.WriteLine(line);
+            }
 
             lock (_lock)
             {
