@@ -7,7 +7,7 @@
     using System.Linq;
 
     /// <summary>
-    /// Logs in a log file the given information.
+    /// Logs given information in a log file.
     /// </summary>
     public sealed class L : IDisposable
     {
@@ -21,7 +21,7 @@
 
         private readonly string[] _enabledLabels;
 
-        private readonly object _lock;
+        private readonly object _lock = new object();
 
         private readonly OpenStreams _openStreams;
 
@@ -55,7 +55,6 @@
             _dateTimeFormat = dateTimeFormat;
             _directory = directory ?? Path.Combine(AppContext.BaseDirectory, "logs");
             _enabledLabels = (enabledLabels ?? new string[0]).Select(Normalize).ToArray();
-            _lock = new object();
             _openStreams = new OpenStreams(_directory);
 
             if (_deleteOldFiles.HasValue)
@@ -84,7 +83,7 @@
         /// Logs the given information.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         [SuppressMessage("Microsoft.Design", "CA1062:Validate arguments of public methods",
             Justification = "The called function validates it.")]
         public void Log(Enum label, string content) => Log(label.ToString(), content);
@@ -93,14 +92,14 @@
         /// Formats the given information and logs it.
         /// </summary>
         /// <param name="label">Label to use when logging</param>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         public void Log(string label, object content)
         {
             if (label == null)
-                throw new ArgumentNullException("label");
+                throw new ArgumentNullException(nameof(label));
 
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             label = Normalize(label);
 
@@ -127,31 +126,31 @@
         /// <summary>
         /// Logs the given information with DEBUG label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         public void Debug(object content) => Log("DEBUG", content);
 
         /// <summary>
         /// Logs the given information with INFO label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         public void Info(object content) => Log("INFO", content);
 
         /// <summary>
         /// Logs the given information with WARN label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         public void Warn(object content) => Log("WARN", content);
 
         /// <summary>
         /// Logs the given information with ERROR label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         public void Error(object content) => Log("ERROR", content);
 
         /// <summary>
         /// Logs the given information with FATAL label.
         /// </summary>
-        /// <param name="content">A string with a message or an object to call ToString() on it</param>
+        /// <param name="content">A string with a message or an object to call ToString() on.</param>
         public void Fatal(object content) => Log("FATAL", content);
 
         /// <summary>
